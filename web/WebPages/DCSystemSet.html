@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet" />
+    <link href="../css/Custom/style.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css?03.14" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+    <div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal_dialog_custom">
+            <div class="cus_spinner">
+                <div class="cus_spinner-container cus_container1">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container2">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container3">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aside class="body_hide left_menu">
+        <section ng-controller="MenuController">
+            <menu></menu>
+            <info></info>
+            <login></login>
+            <!--<push></push>-->
+        </section>
+    </aside>
+    <div id="main-content" ng-controller="SetController" class="cus_main_height main_width body_hide">
+        <div class="wrapper">
+            <div class="platform_height">
+                <div id="book_set" class="cus_table platform_height" ng-show="isPro">
+                    <div class="platform_height">
+                        <div class="col-lg-3 col-sm-3 platform_height">
+                            <div class="div_title" style="height: 6%;">
+                            <span class="span_1" style="color: brown;">
+                                <label>层级管理</label>
+                                <ol style="display:inline-block;font-size: 10px; color: brown;font-style: oblique;">(可鼠标右击操作节点)</ol>
+                            </span>
+                                <span class="span_2"><a href="javascript:void(0);" ng-click="addCategory();"><ol class="icon-plus"></ol>&nbsp;新增主目录</a></span>
+                            </div>
+                            <div id="div_tree" class="cus_height" style="height: 94%;"></div>
+                        </div>
+                        <div ng-class="{'col-lg-3 col-sm-3 platform_height': (currentView.ViewType == 5 || currentView.ViewType == 4 || currentView.ViewType == 7),
+                    'col-lg-9 col-sm-9 platform_height': (currentView.ViewType != 5 && currentView.ViewType != 4 && currentView.ViewType != 7)}">
+                            <div class="div_title" style="height: 6%;">
+                                <span class="span_1" style="color: chocolate;width: 60%"><label>{{currentView.ItemsTitle}}</label></span>
+                                <span class="span_2" style="width: 40%;float: right;">
+                                <a href="javascript:void(0);" ng-show="currentView.ViewType != 6"
+                                   ng-class="{'cus_color': currentView.ViewType == 4}"
+                                   ng-click="currentView.ViewType == 4 ? '' : addItem(currentView.ViewType);"><ol class="icon-plus"></ol>&nbsp;{{currentView.AddTitle}}</a></span>
+                            </div>
+                            <table class="table table-striped" style="height: 94%;">
+                                <thead id="cost_items_title" style="display: none;">
+                                <tr>
+                                    <td class="cus_width_1" style="color: white;">项目名称</td>
+                                    <td class="cus_width_2" style="color: white;">项目价格</td>
+                                    <td class="cus_width_2" style="color: white;">项目单位</td>
+                                    <td class="cus_width_2" style="text-align: center;color: white;">操 作</td>
+                                </tr>
+                                </thead>
+                                <tbody id="appoint_items" class="hide_item">
+                                <tr ng-repeat="item in AppointItems">
+                                    <td class="table_first_col" style="width: 60%;">
+                                        <span ng-show="!item.isEdit || item.TenantID == null">{{item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit && item.TenantID != null" ng-model="item.newItemName" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="tooth_div table_second_col" style="width: 40%;">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 1, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-class="{'cus_color': item.TenantID == null}"
+                                           ng-click="editItem(item, 1);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 1);" ng-show="item.TenantID != null">删 除</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody id="cost_items" class="hide_item">
+                                <tr ng-repeat="item in CostItems">
+                                    <td class="cus_width_1">
+                                        <span ng-show="!item.isEdit || item.Item.TenantID == null">{{item.Item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit && item.Item.TenantID != null" ng-model="item.newItemName" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="cus_width_2">
+                                        <span ng-show="!item.isEdit">{{item.Price.Price | currency:"￥"}}</span>
+                                        <input type="text" name="costPrice" class="form-control" ng-show="item.isEdit" ng-model="item.newPrice" style="width:60%; height: 28px;display: inline-block;">
+                                    </td>
+                                    <td class="cus_width_2">
+                                        <span ng-show="!item.isEdit">{{item.Price.Unit}}</span>
+                                        <input type="text" name="costUnit" class="form-control" ng-show="item.isEdit" ng-model="item.newUnit" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="tooth_div cus_width_2">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 2, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-click="editItem(item, 2);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 2);" ng-show="item.Item.TenantID != null">删 除</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody id="visit_items" class="hide_item">
+                                <tr ng-repeat="item in VisitItems">
+                                    <td class="table_first_col">
+                                        <span ng-show="!item.isEdit || item.TenantID == null" ng-hide="item.isEdit">{{item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit" ng-model="item.newItemName" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="tooth_div table_second_col">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 3, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-class="{'cus_color': item.TenantID == null}"
+                                           ng-click="editItem(item, 3);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 3);" ng-show="item.TenantID != null">删 除</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody id="record_items" class="hide_item">
+                                <tr ng-repeat="item in RecordTemplateItems" ng-click="showTemplateDetail(item);">
+                                    <td class="table_first_col">
+                                        <span ng-show="!item.isEdit || item.TenantID == null">{{item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit" ng-model="item.newItemName" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="tooth_div table_second_col">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 5, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-class="{'cus_color': item.TenantID == null}"
+                                           ng-click="editItem(item, 5);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 5);" ng-show="item.TenantID != null">删 除</a>
+                                </tr>
+                                </tbody>
+                                <tbody id="sub_items" class="hide_item">
+                                <tr ng-repeat="item in SubItems">
+                                    <td class="table_first_col">
+                                        <span ng-show="!item.isEdit || item.TenantID == null">{{item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit" ng-model="item.newItemName" style="width:60%; height: 28px;">
+                                    </td>
+                                    <td class="tooth_div table_second_col">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 6, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-class="{'cus_color': item.TenantID == null}"
+                                           ng-click="editItem(item, 6);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 6);" ng-show="item.TenantID != null">删 除</a>
+                                </tr>
+                                </tbody>
+                                <tbody id="advice_sub_items" class="hide_item">
+                                <tr ng-repeat="item in AdviceItems" ng-click="showAdviceDetail(item);">
+                                    <td class="table_first_col">
+                                        <span ng-show="!item.isEdit || item.TenantID == null">{{item.Name}}</span>
+                                        <input type="text" class="form-control" ng-show="item.isEdit" ng-model="item.newItemName"
+                                               style="width:60%; height: 28px;" name="itemName">
+                                    </td>
+                                    <td class="tooth_div table_second_col">
+                                        <a href="javascript:void(0);" ng-click="saveItem(item, 7, 2);" ng-show="item.isEdit">保 存</a>
+                                        <a href="javascript:void(0);" ng-class="{'cus_color': item.TenantID == null}"
+                                           ng-click="editItem(item, 7);" ng-show="!item.isEdit">编 辑</a>&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" ng-click="deleteItem(item, 7);" ng-show="item.TenantID != null">删 除</a>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6 col-sm-6 platform_height" id="medical_detail" ng-show="(currentView.ViewType == 5 || currentView.ViewType == 4)">
+                            <div class="div_title" style="height: 6%;margin: 0 0 5px 0;">
+                                <span class="span_1" style="color: chocolate;"><label>{{currentView.ThirdItemsTitle}}</label></span>
+                                <span class="span_2" ng-show="isAbleEdit">
+                                    <a href="javascript:void(0);" class="icon-save" ng-click="saveMedicalTemplateContent();">&nbsp;&nbsp;保 存</a>
+                                </span>
+                            </div>
+                            <div style="height: 94%; overflow-y: auto">
+                                <div style="margin: 0 0 5px 0;" ng-repeat="item in currentMedicalContent">
+                                    <div style="display: inline-block; width: 90%"  ng-repeat="Content in item.Contents">
+                                        <div style="display: inline-block;width: 15%;text-align: right;float: left;"><span ng-bind="item.CategoryName"></span>：</div>
+                                        <span ng-bind="Content.Content" style="width: 85%;text-align: left;float: right;" ng-show="item.IsReadOnly"></span>
+                                        <textarea style="height: 80px;width: 85%;text-align: left;float: right;" ng-show="!item.IsReadOnly" class="form-control" ng-model="Content.Content"></textarea>
+                                    </div>
+                                    <span style="display: inline-block; width: 5%;">
+                                        <a href="javascript:void(0);" class="icon-edit" ng-show="item.isSelf" ng-click="editMedicalContent(item);">
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6 platform_height" id="advice_detail" ng-show="(currentView.ViewType == 7)">
+                            <div class="div_title" style="height: 6%;">
+                                <span class="span_1" style="color: chocolate;"><label>{{currentView.ThirdItemsTitle}}</label></span>
+                                <span class="span_2"><a href="javascript:void(0);" class="icon-plus" ng-click="addNewAdviceContentType();">&nbsp;&nbsp;新增医嘱条目</a></span>
+                            </div>
+                            <div class="cus_height" style="height: 94%;">
+                                <div style="margin: 0 0 2% 0;" ng-repeat="item in AdviceContents">
+                                    <div>
+                                <span style="display: inline-block; width: 20%; text-align: left; vertical-align: super;">
+                                    <label>{{item.Self.Content}}：</label>&nbsp;
+                                    <a ng-show="item.Self.TenantID" href="javascript:void(0);" class="icon-plus" ng-click="addNewItemContent(item);"></a>&nbsp;
+                                    <a ng-show="item.Self.TenantID" href="javascript:void(0);" class="icon-trash" ng-click="deleteItemContent(item);"></a>
+                                </span>
+                                    </div>
+                                    <span style="display: inline-block; width: 100%;">
+                                <span ng-repeat="item in item.Childs" class="list_item">
+                                    <span style="display: inline-block;width: 95%;">
+                                        <span>{{$index + 1}}. </span>
+                                        <span  ng-show="!item.isEdit || item.Self.TenantID == null" style="letter-spacing: 2px;">{{item.Self.Content}}</span>
+                                        <input type="text" class="form-control" ng-model="item.adviceContent"
+                                               ng-show="item.isEdit" style="width:60%; height: 100%;display: inline-block;" ng-blur="saveAdviceItemContent($event, item);">
+                                    </span>
+                                    <span style="display: inline-block;">
+                                        <a href="javascript:void(0);" ng-show="item.Self.TenantID" class="icon-trash" ng-click="deleteItemContent(item, $index);"></a><br>
+                                        <a href="javascript:void(0);" ng-show="item.Self.TenantID" class="icon-edit" ng-click="editAdviceItem(item);"></a>
+                                    </span>
+                                </span>
+                            </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增项目 Begin -->
+        <div class="modal fade" id="new_item" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog ty_modal_h ty_modal_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title" ng-bind="OperatorTitle"></span>
+                    </div>
+                    <div class="modal-body ty_bd_h">
+                        <div class="ty_con">
+                            <span class="ty_item_w_1"><i class="color_red">*</i>目录名称：</span>
+                            <span class="ty_item_w_2">
+                                <input type="text" name="itemName" class="form-control input-sm" placeholder="项目名称" ng-model="newItem.Name">
+                            </span>
+                        </div>
+                        <div class="pt_item_sp sys_h txt_cen">
+                            <span class="bell_item_w_2"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveCategory();">保存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增项目 End -->
+        <!-- 新增项目 Begin -->
+        <div class="modal fade" id="add_item" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog ty_modal_h ty_modal_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title" ng-bind="currentView.AddTitle"></span>
+                    </div>
+                    <div class="modal-body ty_bd_h">
+                        <div class="pt_item_sp pt_item_h">
+                            <span class="cus_float_lf bell_item_w_4 txt_rg">
+                                <i class="color_red">*</i>项目名称：
+                            </span>
+                            <span class="cus_float_lf item_w_h txt_lf">
+                                <input type="text" name="itemName" class="form-control input-sm" placeholder="项目名称" ng-model="ItemName">
+                            </span>
+                        </div>
+                        <div class="pt_item_sp pt_item_h" ng-show="currentView.ViewType == 2">
+                            <span class="cus_float_lf bell_item_w_4 txt_rg">
+                                <i class="color_red">*</i>项目价格：
+                            </span>
+                            <span class="cus_float_lf item_w_h txt_lf">
+                                <input type="text" name="itemPrice" class="form-control input-sm" placeholder="项目价格" ng-model="ItemPrice">
+                            </span>
+                        </div>
+                        <div class="pt_item_sp pt_item_h" ng-show="currentView.ViewType == 2">
+                            <span class="cus_float_lf bell_item_w_4 txt_rg">
+                                <i class="color_red">*</i>项目单位：
+                            </span>
+                            <span class="cus_float_lf item_w_h txt_lf">
+                                <input type="text" name="itemUnit" class="form-control input-sm" placeholder="项目单位" ng-model="ItemUnit">
+                            </span>
+                        </div>
+                        <div class="pt_item_sp sys_h_1 txt_cen">
+                            <span class="bell_item_w_2"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveItem('', currentView.ViewType, 1);">保存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增项目 End -->
+        <!-- 新增医嘱条目 Begin -->
+        <div class="modal fade" id="add_advice_item" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog ty_modal_h ty_modal_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新增医嘱条目</span>
+                    </div>
+                    <div class="modal-body ty_bd_h">
+                        <div class="ty_con">
+                            <span class="ty_item_w_1"><i class="color_red">*</i>条目名称：</span>
+                            <span class="ty_item_w_2">
+                                <input type="text" class="form-control input-sm" name="adviceContent" placeholder="条目名称" ng-model="adviceContent">
+                            </span>
+                        </div>
+                        <div class="pt_item_sp sys_h txt_cen">
+                            <span class="bell_item_w_2"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveAdviceContent();">保存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增医嘱条目 End -->
+        <!-- 新增医嘱内容 Begin -->
+        <div class="modal fade" id="add_advice_content" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog ty_modal_h ty_modal_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新增医嘱内容</span>
+                    </div>
+                    <div class="modal-body ty_bd_h">
+                        <div class="ty_con">
+                            <span class="ty_item_w_1 cus_float_lf"><i class="color_red">*</i>医嘱内容：</span>
+                            <span class="item_w_6 cus_float_lf">
+                                <textarea class="form-control" name="adviceContent" placeholder="医嘱内容" ng-model="adviceContent" style="resize: none;">
+                                 </textarea>
+                            </span>
+                        </div>
+                        <div class="pt_item_sp sys_h txt_cen">
+                            <span class="bell_item_w_2"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveAdviceContent();">保存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增医嘱内容 End -->
+    </div>
+    <footer class="footer body_hide">
+        <span class="footer_span">Copyright &copy;2017 niuluo-tech.cn</span>
+    </footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/Jquery/CatalogTree.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Custom/common.min.js?v=20161024"></script>
+<script src="../js/Custom/systemSet.min.js?v=20161024"></script>
+</html>

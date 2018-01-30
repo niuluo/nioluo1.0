@@ -1,0 +1,510 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet" />
+    <link href="../css/Custom/style.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css?03.14" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+    <div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal_dialog_custom">
+            <div class="cus_spinner">
+                <div class="cus_spinner-container cus_container1">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container2">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container3">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aside class="body_hide left_menu">
+        <section ng-controller="MenuController">
+            <menu></menu>
+            <info></info>
+            <login></login>
+            <!--<push></push>-->
+        </section>
+    </aside>
+    <div id="main-content" class="cus_main_height main_width body_hide">
+        <div class="wrapper" ng-controller="ClinicController">
+            <div class="menu_header">
+                <div ng-class="{'plat_menu menu_active': isEmployee, 'plat_menu menu_disabled': !isEmployee}" ng-click="employeeShow();">
+                    <span>员工管理</span>
+                </div>
+                <div ng-class="{'plat_menu menu_active': isPos, 'plat_menu menu_disabled': !isPos}" ng-click="roleShow();">
+                    <span>职位管理</span>
+                </div>
+                <div ng-class="{'plat_menu menu_active': isEquipment, 'plat_menu menu_disabled': !isEquipment}" ng-click="equipmentShow(null, $event);">
+                    <span>设备管理</span>
+                </div>
+                <div class="plat_search" ng-show="isEmployee">
+                    <span class="cus_float_rg">
+                        <a href="javascript:void(0);" class="icon-plus-sign add-new-patient_1" ng-click="addNewEmployee();" title="新增员工"></a>
+                    </span>
+                    <span class="cus_float_rg">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="searchEmployee();" title="搜索"></a>
+                    </span>
+                    <span class="cus_float_rg">
+                        <input type="text" placeholder="姓名/手机号"
+                               class="form-control round-input"
+                               ng-model="searchInfo.Condition">
+                    </span>
+                </div>
+                <div class="plat_search" ng-show="isPos">
+                    <span class="cus_float_rg">
+                        <a href="javascript:void(0);" class="icon-plus-sign add-new-patient_1" ng-click="addNewRole();" title="新增职位"></a>
+                    </span>
+                    <span class="cus_float_rg">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="searchRole();" title="搜索"></a>
+                    </span>
+                    <span class="cus_float_rg">
+                        <input type="text" placeholder="职位名称" class="form-control round-input" ng-model="searchInfo.Condition">
+                    </span>
+                </div>
+                <div class="plat_search" ng-show="isEquipment">
+                    <span class="cus_float_rg">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="searchEquip();" title="搜索"></a>
+                    </span>
+                    <span class="cus_float_rg">
+                        <select class="form-control" ng-model="searchInfo.AddUserID" ng-options="x.UserID as x.UserName for x in employeeList">
+                            <option value="">全部</option>
+                        </select>
+                    </span>
+                    <span class="cus_float_rg">
+                        <input id="inEquipData" type="text" placeholder="入库时间" class="form-control" ng-model="searchInfo.AddTime">
+                    </span>
+                    <span class="cus_float_rg">
+                        <input type="text" placeholder="物品名称" class="form-control" ng-model="searchInfo.EquipmentName">
+                    </span>
+                </div>
+            </div>
+            <div class="cl_con_h">
+                <div ng-show="isEmployee" class="cl_out">
+                    <div class="cus_table">
+                        <table class="table table-striped" style="margin-bottom: 0px;">
+                            <thead>
+                            <tr>
+                                <td style="width: 10%;color: white;">员工姓名</td>
+                                <td style="width: 5%;color: white;">性 别</td>
+                                <td style="width: 10%;color: white;">年 龄</td>
+                                <td style="width: 10%;color: white;">职 位</td>
+                                <td style="width: 15%;color: white;">职 称</td>
+                                <td style="width: 15%;color: white;">手机号</td>
+                                <td style="width: 20%;color: white;">邮 箱</td>
+                                <td style="width: 15%;color: white;">操 作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="employee in employeeList">
+                                <td style="width: 10%;">{{employee.UserName}}</td>
+                                <td style="width: 5%;">{{employee.GenderName}}</td>
+                                <td style="width: 10%;"><span ng-hide="!employee.Age">{{employee.Age}}岁</span></td>
+                                <td style="width: 10%;">{{employee.RoleName}}</td>
+                                <td style="width: 15%;">{{employee.PosName}}</td>
+                                <td style="width: 15%;">{{employee.Mobile}}</td>
+                                <td style="width: 20%;">{{employee.Email}}</td>
+                                <td style="width: 15%;">
+                                    <a href="javascript:void(0);" ng-click="editEmployee(employee);">
+                                        编 辑
+                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" ng-click="deleteEmployee(employee)">删 除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="isPos" class="cl_out">
+                    <div class="cus_table">
+                        <table class="table table-striped" style="margin-bottom: 0px;display: block;">
+                            <thead>
+                            <tr>
+                                <td style="width: 10%;color: white;">职位名称</td>
+                                <td style="width: 60%;color: white;">拥有权限</td>
+                                <td style="width: 10%;color: white;">职位简述</td>
+                                <td style="width: 10%;color: white;">可预约</td>
+                                <td style="width: 10%;color: white;">操 作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="role in roleList">
+                                <td style="width: 10%;">{{role.Role.RoleName}}</td>
+                                <td style="width: 60%;">{{role.RolePermissionStr}}</td>
+                                <td style="width: 10%;">{{role.Role.Description}}</td>
+                                <td style="width: 10%;">
+                                    <span ng-show="role.Role.IsAppoint">是</span>
+                                    <span ng-show="!role.Role.IsAppoint">否</span>
+                                </td>
+                                <td style="width: 10%;">
+                                    <a href="javascript:void(0);" ng-click="editRole(role);">
+                                        编 辑
+                                    </a>&nbsp;&nbsp;&nbsp;
+                                    <a ng-show="isAbleDelete(role);" href="javascript:void(0);" ng-click="deleteRole(role);">删 除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="isEquipment" class="cl_out">
+                    <div class="cus_float_lf cl_lf">
+                        <div class="cl_header">
+                            <span class="cus_float_lf cus_clo">物品类别</span>
+                            <span class="cus_float_rg cl_add" ng-click="addType(1);"><i class="icon-plus"></i>&nbsp;新增类别</span>
+                        </div>
+                        <div class="cl_bd" id="type_list">
+                            <div class="ty_item_h ty_item_selected" ng-click="selectedType(null, $event);"><span>全部</span></div>
+                            <div class="ty_item_h" ng-repeat="item in categoryDealList" ng-click="selectedType(item, $event);" ng-mouseover="showOperate(item);" ng-mouseleave="hideOperate(item);">
+                                <span class="ty_item_w" ng-bind="item.EquipmentCategoryName"></span>
+                                <span ng-show="item.isShow" class="icon-trash ty_item_h cus_float_rg" ng-click="deleteType(item);" title="删除"></span>
+                                <span ng-show="item.isShow" class="icon-edit ty_item_h cus_float_rg" ng-click="addType(2, item);" title="编辑"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cus_float_rg cl_rg">
+                        <div class="cl_header">
+                            <span class="cl_btn_w cl_btn_h cl_btn_s" ng-click="addEquipment();">入库</span>
+                            <span class="cl_btn_w cl_btn_h cl_btn_s" ng-click="deleteEquipment();">删除</span>
+                            <span class="cl_btn_w cl_btn_h cl_btn_s" ng-click="EquipmentExport();">导出excel</span>
+                        </div>
+                        <div class="cl_bd">
+                            <div class="tb_title">
+                                <span class="cl_btn_h cl_tb_w_1">设备名称</span>
+                                <span class="cl_btn_h cl_tb_w_1">入库单号</span>
+                                <span class="cl_btn_h cl_tb_w_2">入库时间</span>
+                                <span class="cl_btn_h cl_tb_w_1">制造公司</span>
+                                <span class="cl_btn_h cl_tb_w_2">出厂时间</span>
+                                <span class="cl_btn_h cl_tb_w_2">安装时间</span>
+                                <span class="cl_btn_h cl_tb_w_2">保修年限</span>
+                                <span class="cl_btn_h cl_tb_w_2">数量</span>
+                                <span class="cl_btn_h cl_tb_w_1">维修单位</span>
+                                <span class="cl_btn_h cl_tb_w_1">联系方式</span>
+                                <span class="cl_btn_h cl_tb_w_1">备注</span>
+                            </div>
+                            <div class="tb_con">
+                                <div class="tb_item color_equip" ng-if="!equipList.length">对不起，没有符合条件的设备！</div>
+                                <div class="tb_item" ng-repeat="item in equipList" ng-mouseover="showOperate(item);" ng-mouseleave="hideOperate(item);">
+                                    <span class="cl_btn_h cl_tb_w_1">
+                                        <span class="ty_item_w_3"><input type="checkbox" ng-model="item.isSelected"></span>
+                                        <span class="ty_item_w_4 txt_over" ng-bind="item.EquipmentName"></span>
+                                    </span>
+                                    <span class="cl_btn_h cl_tb_w_1 txt_over" ng-bind="item.RKDH"></span>
+                                    <span class="cl_btn_h cl_tb_w_2 txt_over" ng-bind="timeText(item.AddTime)"></span>
+                                    <span class="cl_btn_h cl_tb_w_1 txt_over" ng-bind="item.Maker"></span>
+                                    <span class="cl_btn_h cl_tb_w_2 txt_over" ng-bind="timeText(item.OutTime)"></span>
+                                    <span class="cl_btn_h cl_tb_w_2 txt_over" ng-bind="timeText(item.InstallationTime)"></span>
+                                    <span ng-class="{'cl_btn_h txt_over color_red': isOverWarranty(item),'cl_btn_h txt_over': isOverWarranty(item)}" ng-bind="timeText(item.Warranty)" style="width: 8%;text-align: center"></span>
+                                    <span class="cl_btn_h cl_tb_w_2 txt_over" ng-bind="item.Quantity"></span>
+                                    <span class="cl_btn_h cl_tb_w_1 txt_over" ng-bind="item.MaintenanceUnit"></span>
+                                    <span class="cl_btn_h cl_tb_w_1 txt_over" ng-bind="item.MaintenanceContact"></span>
+                                    <span class="cl_btn_h cl_tb_w_1 txt_over" ng-bind="item.Remark"></span>
+                                    <span ng-show="item.isShow" class="icon-edit cl_edit cl_btn_h" ng-click="editEquipment(item);" title="编辑"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增/编辑员工 Begin -->
+            <div class="modal fade" id="new_employee" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog pt_modal_w em_modal_h">
+                    <div class="modal-content modal_content_custom">
+                        <div class="modal-header modal_head modal_header_height">
+                            <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                            </div>
+                            <span class="head_title" ng-bind="editEmployeeInfo.OperateTitle"></span>
+                        </div>
+                        <div class="modal-body em_bd_h">
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="tlt_bk bell_item_w_1">基本信息</span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>姓名：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <input name="empName" class="form-control input-sm" type="text" placeholder="姓名" ng-model="editEmployeeInfo.UserName">
+                                </span>
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>性别：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <select name="checkGender" class="form-control input-sm" ng-model="editEmployeeInfo.Gender"
+                                        ng-options="x.Type as x.Name for x in genderList">
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>密码：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <input name="empPassword" type="password" class="form-control input-sm" placeholder="密码"
+                                       ng-model="editEmployeeInfo.Password">
+                                </span>
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>手机号：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <input name="empMobile" type="text" class="form-control input-sm" placeholder="手机号，15214312968..."
+                                           ng-model="editEmployeeInfo.Mobile">
+                                </span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="cus_float_lf bell_item_w_2 txt_rg">出生日期：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <input id="em_birth" name="empBirthDate" type="text" class="form-control input-sm" placeholder="出生日期"
+                                       ng-model="editEmployeeInfo.Birthday">
+                                </span>
+                                <span class="cus_float_lf bell_item_w_2 txt_rg">邮箱：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <input name="empEmail" type="text" class="form-control input-sm" placeholder="邮箱"
+                                           ng-model="editEmployeeInfo.Email">
+                                </span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="tlt_bk bell_item_w_1">岗位信息</span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h">
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>职称：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <select name="JobTitle" class="form-control input-sm" ng-model="editEmployeeInfo.JobTitle"
+                                            ng-options="x.Type as x.Name for x in posList">
+                                            <option value="">请选择职称</option>
+                                    </select>
+                                </span>
+                                <span class="cus_float_lf bell_item_w_2 txt_rg"><i class="color_red">*</i>职位：</span>
+                                <span class="cus_float_lf bell_item_w_4 txt_lf">
+                                    <select name="JobRoleID" class="form-control input-sm" ng-model="editEmployeeInfo.RoleID"
+                                            ng-options="x.RoleID as x.RoleName for x in roleListWithoutPermission">
+                                            <option value="">请选择职位</option>
+                                        </select>
+                                </span>
+                            </div>
+                            <div class="pt_item_sp pt_item_h_1 txt_cen">
+                                <span class="bell_item_w_2"><button class="btn cus_btn_color cus_btn_width" ng-click="saveEmployee();">保 存</button></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--新增/编辑员工 End -->
+            <!-- 新增/编辑职位 Begin -->
+            <div class="modal fade" id="new_role" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog rol_modal_w rol_modal_h">
+                    <div class="modal-content modal_content_custom">
+                        <div class="modal-header modal_head modal_header_height">
+                            <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                            </div>
+                            <span class="head_title" ng-bind="currentRole.OperateTitle"></span>
+                        </div>
+                        <div class="modal-body rol_bd_h">
+                            <div class="rol_item_sp rol_h">
+                                <span class="rol_h cus_float_lf bell_item_w_1 txt_rg">职位：</span>
+                                <span class="rol_h cus_float_lf bell_item_w_4 txt_lf span_sp">
+                                    <input class="form-control" type="text" placeholder="职位名称"
+                                                  ng-model="currentRole.RoleName" name="roleName" id="pos_role"></span>
+                                <span class="rol_h cus_float_lf bell_item_w_1 txt_rg">可预约：</span>
+                                <span class="rol_h cus_float_lf bell_item_w_4 txt_lf">
+                                    <input type="checkbox" ng-true-value="true" ng-false-value="false"  ng-checked="currentRole.IsAppoint" ng-model="currentRole.IsAppoint">
+                                </span>
+                            </div>
+                            <div class="rol_item_sp rol_h_1">
+                                <span class="rol_h cus_float_lf bell_item_w_1 txt_rg">备注：</span>
+                                <span class="rol_h_1 cus_float_lf bell_item_w_5 txt_lf">
+                                    <textarea class="form-control" placeholder="职位描述" ng-model="currentRole.Description" style="height: 100%;"></textarea>
+                                </span>
+                            </div>
+                            <div class="auth_bd_h rol_item_sp">
+                                <div class="rol_h cus_float_lf bell_item_w_1 txt_rg"><span>权限：</span></div>
+                                <div class="bell_item_w_5 cus_float_lf txt_lf auth_list">
+                                    <div ng-repeat="permission in permissionList">
+                                        <div>
+                                            <span ng-class="{'icon-ok-sign cus_green_color': permission.isOwned, 'icon-circle-blank cus_green_color': !permission.isOwned}"
+                                                  ng-click="updatePermission(permission, 1)"></span>
+                                            <span ng-bind="permission.Module.ModuleName"></span>
+                                        </div>
+                                        <div class="item_pd" ng-show="permission.isOwned">
+                                            <div ng-repeat="item in permission.Auths" class="permission_div">
+                                                        <span ng-class="{'icon-ok-sign cus_green_color': item.IsChecked,
+                                                    'icon-circle-blank cus_green_color': !item.IsChecked}" ng-click="updatePermission(item, 2)"></span>
+                                                <span ng-bind="item.AuthName"></span>
+                                                <span style="font-size: 13px;color: grey;">（<span ng-bind="item.Description"></span>）</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="auth_bd_h2 rol_item_sp">
+                                <div class="rol_h cus_float_lf bell_item_w_1 txt_rg"><span>关联员工：</span></div>
+                                <div class="bell_item_w_5 cus_float_lf txt_lf auth_list">
+                                    <div class="div_unit" ng-repeat="item in roleEmployeeList">
+                                            <span ng-class="{'icon-ok-sign cus_green_color': item.IsChecked,
+                                                'icon-circle-blank cus_green_color': !item.IsChecked}" ng-click="updatePermission(item, 3)">
+                                            </span>
+                                        <span class="div_col_2" ng-bind="item.UserName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rol_item_sp rol_h txt_cen">
+                                <span class="bell_item_w_4"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveRole();">保存</button></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增/编辑职位 End -->
+            <!-- 新增/编辑设备 Begin -->
+            <div class="modal fade" id="new_equipment" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog equip_modal_w equip_modal_h">
+                    <div class="modal-content modal_content_custom">
+                        <div class="modal-header modal_head modal_header_height">
+                            <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                            </div>
+                            <span class="head_title" ng-bind="equip.Title"></span>
+                        </div>
+                        <div class="modal-body eq_bd_h">
+                            <div class="equip_info">
+                                <span class="eq_w_1"><i class="color_red">*</i>入库时间：</span>
+                                <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" id="equipDate" name="equipDate" placeholder="入库时间" ng-model="equip.equipInfo.AddTime"></span>
+                                <span class="eq_w_1"><i class="color_red">*</i>入库员：</span>
+                                <span class="eq_w_2"><select class="form-control input-sm" name="equipmentUser" ng-model="User" ng-options="(x.UserID + '-' + x.UserName) as x.UserName for x in employeeList">
+                                    <option value="">请选择入库人员</option></select></span>
+                            </div>
+                            <div class="eq_split"></div>
+                            <div class="equip_info">
+                                <span class="eq_w_1"><i class="color_red">*</i>设备名称：</span>
+                                <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" name="equipmentName" placeholder="设备名称" ng-model="equip.equipInfo.EquipmentName"></span>
+                                <span class="eq_w_1">出厂时间：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm" type="text" id="outEquipDate" placeholder="出厂时间" ng-model="equip.equipInfo.OutTime"></span>
+                            </div>
+                            <div class="equip_info">
+                                <span class="eq_w_1"><i class="color_red">*</i>物品类别：</span>
+                                <span class="eq_w_2 eq_mg"><select class="form-control input-sm" name="CategoryType" ng-model="EquipCategory" ng-options="(x.EquipmentCategoryID + '-' + x.EquipmentCategoryName) as x.EquipmentCategoryName for x in categoryDealList">
+                                    <option value="">请选择物品类别</option>
+                                </select>
+                                </span>
+                                <span class="eq_w_1"><i class="color_red">*</i>保修年限：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm" type="text" id="warrantyData" name="warrantyData" placeholder="保修年限" ng-model="equip.equipInfo.Warranty"></span>
+                            </div>
+                            <div class="equip_info">
+                                <span class="eq_w_1">规格：</span>
+                                <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" placeholder="规格" ng-model="equip.equipInfo.Specification"></span>
+                                <span class="eq_w_1"><i class="color_red">*</i>保修提醒：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm input-wt" type="text" name="Quantity" placeholder="保修年限提前提醒天数" ng-model="equip.equipInfo.AdvanceDays">
+                                <i class="unit_date">天</i>
+                                </span>
+                            </div>
+                            <div class="equip_info">
+                                <span class="eq_w_1">制造公司：</span>
+                                <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" placeholder="制造公司" ng-model="equip.equipInfo.Maker"></span>
+                                <span class="eq_w_1">单位：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm" type="text" placeholder="单位" ng-model="equip.equipInfo.Unit"></span>
+                            </div>
+                            <div class="equip_info">
+                                <span class="eq_w_1">安装时间：</span>
+                                <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" id="setEquipDate" placeholder="安装时间" ng-model="equip.equipInfo.InstallationTime"></span>
+                                <span class="eq_w_1">数量：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm" type="text" name="Quantity" placeholder="数量" ng-model="equip.equipInfo.Quantity"></span>
+                            </div>
+                            <div class="equip_info">
+                                <span class="eq_w_1">型号：</span>
+                                <span class="eq_w_2"><input class="form-control input-sm" type="text" placeholder="型号" ng-model="equip.equipInfo.Model"></span>
+                            </div>
+                            <div class="eq_mark equip_info">
+                                <span class="eq_w_1">备注：</span>
+                                <span class="eq_w_3 item_h"><textarea class="form-control input-sm item_h" placeholder="备注" ng-model="equip.equipInfo.Remark"></textarea></span>
+                            </div>
+                                <div class="eq_split"></div>
+                                <div class="equip_info">
+                                    <span class="eq_w_1">维修单位：</span>
+                                    <span class="eq_w_2 eq_mg"><input class="form-control input-sm" type="text" placeholder="维修单位" ng-model="equip.equipInfo.MaintenanceUnit"></span>
+                                    <span class="eq_w_1">联系方式：</span>
+                                    <span class="eq_w_2"><input class="form-control input-sm" type="text" name="equipContact" placeholder="联系方式" ng-model="equip.equipInfo.MaintenanceContact"></span>
+                                </div>
+                                <div class="end_btn">
+                                    <span><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveEquip();">保存</button></span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增/编辑设备 End -->
+            <!-- 新增/编辑分类 Begin -->
+            <div class="modal fade" id="new_type" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog ty_modal_h ty_modal_w">
+                    <div class="modal-content modal_content_custom">
+                        <div class="modal-header modal_head modal_header_height">
+                            <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                            </div>
+                            <span class="head_title" ng-bind="newCategoryDeal.Title"></span>
+                        </div>
+                        <div class="modal-body ty_bd_h">
+                            <div class="ty_con">
+                                <span class="ty_item_w_1"><i class="color_red">*</i>名称：</span>
+                                <span class="ty_item_w_2"><input class="form-control input-sm" type="text" name="equipmentCategoryName" placeholder="名称" ng-model="newCategoryDeal.EquipmentCategoryName"></span>
+                            </div>
+                            <div class="end_btn">
+                                <span><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveCategoryDeal();">保存</button></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增/编辑分类 End -->
+        </div>
+    </div>
+    <footer class="footer footer_pal body_hide">
+        <span class="footer_span">Copyright &copy;2017 niuluo-tech.cn</span>
+    </footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Custom/common.min.js?v=20161024"></script>
+<script src="../js/Custom/clinicMG.min.js?v=20161024"></script>
+</html>

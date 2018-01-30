@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body>
+<section id="medical_record">
+    <div ng-controller="MedicalRecordController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;">
+                <label style="line-height: 50px;">我的电子病例</label>
+            </div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="page__bd">
+                    <div class="weui-cells" ng-repeat="item in treats">
+                        <a class="weui-cell weui-cell_access" href="javascript:void(0);" ng-click="showDetail(item);">
+                            <div class="weui-cell__bd">
+                                <p>就诊事项：{{item.Appoint.AppointItemName}}</p>
+                                <p>就诊时间：{{getAppointTime(item.Appoint.BeginTime) | date: "yyyy-MM-dd hh:mma"}}</p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                详情
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/medicalRecord.min.js"></script>
+</html>

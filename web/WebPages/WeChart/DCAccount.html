@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body class="bg_color">
+
+<section id="account_list">
+    <div ng-controller="AccountController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;"><label
+                    style="line-height: 50px;">我的账单</label></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="page__bd" style="display: none">
+                    <div ng-repeat="item in accountList">
+                        <div class="weui-cells mg_3">
+                            <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                                <div style="height: 40px;">
+                                    <p style="font-weight: bold;" class="pull-left">账单号：<span ng-bind="item.BillNoStr"></span></p>
+                                    <span class="pull-right" ng-bind="statusText(item.BillStatus)"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells mg_3">
+                            <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                                <div ng-repeat="detail in item.CostList">
+                                    <p style="display: inline-block" ng-bind="showName(detail)"></p>
+                                    <span class="pull-right" style="color:#ff6600">￥<span ng-bind="detail.DiscountPrice"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells mg_3">
+                            <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                                <div style="margin-bottom: 20px;margin-top: 20px;">
+                                    <span>应付款金额：</span>
+                                    <span style="color:#ff6600">￥<span ng-bind="item.Arrears"></span></span>
+                                    <input type="button" value="付款" class="pull-right btn btn-success" ng-click="goToWaitPay(item)"
+                                           ng-show="item.BillStatus == 0 || item.BillStatus == 1 || item.BillStatus == 2"/>
+                                    <input type="button" value="查看" class="pull-right btn btn-success" ng-click="goToDetail(item)"
+                                           ng-show="item.BillStatus == 3 || item.BillStatus == 4 || item.BillStatus == 5"/>
+                                    <!--<input type="button" value="查看" class="pull-right btn btn-success" ng-click="goToDetail(item)"/>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/account.min.js"></script>
+</html>

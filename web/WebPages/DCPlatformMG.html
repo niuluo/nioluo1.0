@@ -1,0 +1,1852 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8;"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet"/>
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+    <link href="../css/Common/fullcalendar.min.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../css/Custom/style.css?03.14" rel="stylesheet">
+    <link href="../css/Common/datedropper.css" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+<div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal_dialog_custom">
+        <div class="cus_spinner">
+            <div class="cus_spinner-container cus_container1">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container2">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container3">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<aside class="body_hide left_menu">
+    <div ng-controller="MenuController">
+        <menu></menu>
+        <info></info>
+        <login></login>
+        <!--<push></push>-->
+    </div>
+</aside>
+<div id="main-content" class="cus_main_height main_width body_hide">
+    <div class="wrapper" ng-controller="PlatformController">
+        <div style="width: 75%;height: 100%;display: inline-block;">
+            <div class="menu_header">
+                <div ng-class="{'plat_menu menu_active': isApp, 'plat_menu menu_disabled': !isApp}" ng-click="patientTabClick();"><span>今日预约</span></div>
+                <div ng-class="{'plat_menu menu_active': isVis, 'plat_menu menu_disabled': !isVis}" ng-click="visitTabClick();"><span>今日回访</span></div>
+                <div ng-class="{'plat_menu menu_active': isBill, 'plat_menu menu_disabled': !isBill}" ng-click="getBills();"><span>收银台</span></div>
+                <div class="plat_search" ng-show="isApp">
+                    <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-plus-sign show-add_1" ng-click="showAdd();" title="{{headerButton}}"></a>
+                    </span>
+                    <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-refresh refresh" ng-click="refresh();" title="刷新"></a>
+                    </span>
+                    <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="searchAppoints();" title="搜索"></a>
+                    </span>
+                    <span class="plat_right">
+                        <input type="text" placeholder="患者姓名/电话号码"
+                               class="form-control round-input"
+                               ng-model="searchData.patient.condition">
+                    </span>
+                    <span class="plat_right">
+                        <select class="form-control"
+                                ng-model="searchData.patient.status"
+                                ng-options="x.Value as x.Text for x in bookStateList">
+                        </select>
+                    </span>
+                    <span ng-show="!isDoctor || isShowAllOperate" class="plat_right">
+                        <select class="form-control" id="select_doctor"
+                                ng-model="currentUserDoctorId"
+                                ng-options="x.UserID as x.UserName for x in DoctorList">
+                                <option value="">医生</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="plat_search" ng-show="isVis">
+                    <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-plus-sign show-add_1" ng-click="showAdd();" title="{{headerButton}}"></a>
+                    </span>
+                    <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-refresh refresh" ng-click="refresh();" title="刷新"></a>
+                    </span>
+                     <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="searchVisits();" title="搜索"></a>
+                    </span>
+                    <span class="plat_hd_w_con plat_right">
+                        <input type="text" placeholder="患者姓名/电话号码"
+                               class="form-control round-input"
+                               ng-model="searchData.visit.condition">
+                    </span>
+                    <span class="plat_right">
+                        <select class="form-control" ng-model="searchData.visit.status"
+                                ng-options="x.Value as x.Text for x in visitStateList">
+                        </select>
+                    </span>
+                    <span class="plat_hd_w_date plat_right">
+                        <input id="visit_end_date" type="text" placeholder="截止日期" class="form-control round-input"
+                               ng-model="searchData.visit.EndDate">
+                    </span>
+                    <span class="plat_top">~</span>
+                    <span class="plat_hd_w_date plat_right">
+                        <input id="visit_start_date" type="text" placeholder="起始日期" class="form-control round-input"
+                               ng-model="searchData.visit.BeginDate">
+                    </span>
+                </div>
+                <div class="plat_search" ng-show="isBill">
+                      <span class="plat_top">
+                        <a href="javascript:void(0);" class="icon-search search-appoints_1" ng-click="getBills();" title="搜索"></a>
+                    </span>
+                    <span class="plat_hd_w_con plat_right">
+                        <input type="text" placeholder="患者姓名/电话号码"
+                               class="form-control round-input"
+                               ng-model="searchData.bill.Condition">
+                    </span>
+                    <span class="plat_right">
+                        <select class="form-control" ng-model="searchData.bill.Status"
+                                ng-options="x.Type as x.Name for x in billStateList">
+                        </select>
+                    </span>
+                    <span class="plat_hd_w_date plat_right">
+                        <input id="end_date" type="text" placeholder="截止日期" class="form-control round-input"
+                               ng-model="searchData.bill.EndDate">
+                    </span>
+                    <span class="plat_top">~</span>
+                    <span class="plat_hd_w_date plat_right">
+                        <input id="start_date" type="text" placeholder="起始日期" class="form-control round-input"
+                               ng-model="searchData.bill.BeginDate">
+                    </span>
+                </div>
+            </div>
+            <div class="patient_list">
+                <div id="today_patient" ng-show="isApp" class="platform_height">
+                    <!-- 预约列表 Begin -->
+                    <div class="patient-table cus_table platform_height" style="position: relative;">
+                        <table class="table table-hover table-striped td_pt" id="patient_list">
+                            <thead>
+                            <tr>
+                                <td style="width: 15%;color: white;">患者姓名</td>
+                                <td style="width: 17%;color: white;">电话号码</td>
+                                <td style="width: 10%;color: white;">医生</td>
+                                <td style="width: 15%;color: white;">预约事项</td>
+                                <td style="width: 15%;color: white;">预约时间</td>
+                                <td style="width: 10%;color: white;">初/复诊</td>
+                                <td style="width: 10%;color: white;">状态</td>
+                                <td style="width: 8%;color: white;">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-if="!Appointments"><td style="width: 100%;"><span style="color: firebrick;">对不起，没有符合条件的预约！</span></td></tr>
+                            <tr ng-repeat="item in Appointments"
+                                ng-class="{'selected': $index == 0}"
+                                ng-mousedown="showBaseDetail(item,$index, 0, $event, 'patient_list');"
+                                ng-show="(isShowAllOperate || (!isDoctor) || (isDoctor && item.Appoint.Status != 1 && item.Appoint.Status != 5))">
+                                <td style="width: 15%;">
+                                    <span>{{item.Appoint.PatientName}}</span>
+                                </td>
+                                <td style="width: 17%;">
+                                    <span ng-class="{'cus_color_profit': !item.Appoint.MainID, 'cus_color_refund': item.Appoint.MainID}" ng-bind="checkIsOwner(item);"></span>
+                                    {{item.Appoint.Mobile}}
+                                </td>
+                                <td style="width: 10%;">{{item.Appoint.DoctorName}}</td>
+                                <td style="width: 15%;">{{item.Appoint.AppointItemName}}</td>
+                                <td style="width: 15%;">{{appointTimeText(item.Appoint.BeginTime,
+                                    item.Appoint.EndTime)}}
+                                </td>
+                                <td style="width: 10%;">{{appointTypeText(item.Appoint.AppointType)}}</td>
+                                <td style="width: 10%;"
+                                    ng-class="{'cus_success':item.Appoint.Status == 1,
+                                    'cus_info':item.Appoint.Status == 2,
+                                    'cus_warning':item.Appoint.Status == 3,
+                                    'cus_muted':item.Appoint.Status == 4,
+                                    'cus_danger':item.Appoint.Status == 5}">{{StateText(item.Appoint.Status)}}
+                                </td>
+                                <td style="width: 8%;">
+                                <span ng-if="isShowAllOperate">
+                                    <a href="javascript:void(0);" class="btn-status" style="background-color: #3a87fd;"
+                                       ng-click="checkAppoint(item, $index, 2);"
+                                       ng-show="item.Appoint.Status == 1 || item.Appoint.Status == 5">
+                                        签到
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn-status" style="background-color: #c09853;"
+                                       ng-click="checkAppoint(item, $index, 3);"
+                                       ng-show="item.Appoint.Status == 2">
+                                        治疗
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn-status" style="background-color: #999999;"
+                                       ng-click="checkAppoint(item, $index, 4);"
+                                       ng-show="item.Appoint.Status == 3">
+                                        完成
+                                    </a>
+                                </span>
+                                    <span ng-if="!isShowAllOperate">
+                                    <a href="javascript:void(0);" class="btn-status"
+                                       ng-click="checkAppoint(item, $index, 2);"
+                                       ng-show="item.Appoint.Status == 1 || item.Appoint.Status == 5" style="background-color: #3a87fd;">
+                                        签到
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn-status"
+                                       ng-click="checkAppoint(item, $index, 3);"
+                                       ng-show="isDoctor && item.Appoint.Status == 2" style="background-color: #c09853;">
+                                        治疗
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn-status"
+                                       ng-click="checkAppoint(item, $index, 4);"
+                                       ng-show="isDoctor && item.Appoint.Status == 3" style="background-color: #999999;">
+                                        完成
+                                    </a>
+                                </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="patientType"  ng-hide="!PatientList">
+                            <label>患者类型：</label>
+                            <div ng-repeat="item in PatientLevelList" style="display: inline-block;width: 100px;height: 100%;">
+                                <span style="display: inline-block; width: 45%;vertical-align: bottom;text-align: right;" ng-bind="item.Name" class="ellipsis"></span>
+                                <span style="display: inline-block; width: 30%; height: 60%;background-color: {{item.Color}};vertical-align: middle"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 预约列表 End -->
+                </div>
+                <div id="today_visit" ng-show="isVis" class="platform_height">
+                    <!-- 回访列表 Begin -->
+                    <div class="patient-table cus_table">
+                        <table class="table table-hover table-striped platform_height" id="visit_list" >
+                            <thead>
+                            <tr>
+                                <td style="width: 15%;color: white;">患者姓名</td>
+                                <td style="width: 12%;color: white;">电话号码</td>
+                                <td style="width: 10%;color: white;">回访人员</td>
+                                <td style="width: 25%;color: white;">回访事项</td>
+                                <td style="width: 15%;color: white;">回访时间</td>
+                                <td style="width: 13%;color: white;">状态</td>
+                                <td style="width: 10%;color: white;">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-if="!Visits"><td style="width: 100%;"><span style="color: firebrick;">对不起，没有符合条件的回访！</span></td></tr>
+                            <tr ng-repeat="item in Visits"
+                                ng-class="{'selected': $index == 0}"
+                                ng-mousedown="showBaseDetail(item,$index, 1, $event, 'visit_list');">
+                                <td style="width: 15%;">
+                                <span ng-class="{'circle_disable':item.PatientType.Type==2, 'circle_treating':item.PatientType.Type==1}">
+                                    {{item.currentVisit.Visit.PatientName}}
+                                </span>
+                                </td>
+                                <td style="width: 12%;">{{item.currentVisit.Visit.Mobile}}</td>
+                                <td style="width: 10%;">{{item.currentVisit.Visit.VisitorName}}</td>
+                                <td class="ellipsis" style="width: 25%;">{{item.currentVisit.Visit.VisitItemName}}</td>
+                                <td style="width: 15%;">{{timeText(item.currentVisit.Visit.VisitTime)}}</td>
+                                <td style="width: 13%;">{{VisitStateText(item.currentVisit.Visit.Status)}}</td>
+                                <td style="width: 10%;">
+                                    <a href="javascript:void(0);" class="btn-status"
+                                       ng-click="checkVisit(item, $index);"
+                                       ng-show="item.currentVisit.Visit.Status == 1 || item.currentVisit.Visit.Status == 3">
+                                        完成
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <patient-level-list></patient-level-list>
+                    </div>
+                    <!-- 回访列表 End -->
+                </div>
+                <div id="cashier" ng-show="isBill" class="platform_height">
+                    <!-- 账单列表 Begin -->
+                    <div class="patient-table cus_table">
+                        <table class="table table-hover table-striped platform_height" id="bill_list">
+                            <thead>
+                            <tr>
+                                <td style="width: 8%;color: white;">序号</td>
+                                <td style="width: 15%;color: white;">患者姓名</td>
+                                <td style="width: 8%;color: white;">主治医生</td>
+                                <td style="width: 8%;color: white;">账单折扣</td>
+                                <td style="width: 15%;color: white;">应收金额</td>
+                                <td style="width: 17%;color: white;">创建时间</td>
+                                <td style="width: 8%;color: white;">账单状态</td>
+                                <td style="width: 21%;color: white;">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-if="!billList"><td colspan="8" style="width: 100%;"><span style="color: firebrick;">对不起，没有符合条件的账单！</span></td></tr>
+                            <tr ng-repeat="item in billList"
+                                ng-mousedown="showBillDetail(item, $index);" ng-class="{'selected': $index == 0}">
+                                <td class="ellipsis" style="width: 8%;">
+                                    <span ng-bind="$index+1"></span>
+                                </td>
+                                <td class="ellipsis" style="width: 15%;">
+                                    <span ng-if="item.BillStatus == 1" class="icon-bookmark cus_bill_waiting_font_color" style="float: left;"></span>
+                                    <span ng-if="item.BillStatus == 2" class="icon-bookmark cus_bill_arrears_font_color" style="float: left;"></span>
+                                    <span ng-if="item.BillStatus == 3" class="icon-bookmark cus_bill_canceled_font_color" style="float: left;"></span>
+                                    <span ng-if="item.BillStatus == 4" class="icon-bookmark cus_bill_completed_font_color" style="float: left;"></span>
+                                    <span ng-bind="item.PatientName"></span>
+                                </td>
+                                <td class="ellipsis" style="width: 8%;">
+                                    <span ng-bind="item.DoctorName"></span>
+                                </td>
+                                <td class="ellipsis" style="width: 8%;">
+                                    <span ng-bind="item.Discount"></span>%
+                                </td>
+                                <td class="ellipsis" style="width: 15%;">
+                                    <span ng-bind="item.DueCharge | currency: '￥'"></span>
+                                </td>
+                                <td class="ellipsis" style="width: 17%;">
+                                    <span ng-bind="item.CreateTime"></span>
+                                </td>
+                                <td class="ellipsis" style="width: 8%;">
+                                    <span ng-if="item.BillStatus == 1" class="cus_bill_status cus_bill_waiting_font_color">待收费</span>
+                                    <span ng-if="item.BillStatus == 2" class="cus_bill_status cus_bill_arrears_font_color">欠费</span>
+                                    <span ng-if="item.BillStatus == 3" class="cus_bill_status cus_bill_canceled_font_color">已作废</span>
+                                    <span ng-if="item.BillStatus == 4" class="cus_bill_status cus_bill_completed_font_color">已完成</span>
+                                </td>
+                                <td class="ellipsis" style="width: 21%;">
+                                    <a ng-if="item.BillStatus == 1"
+                                       href="javascript:void(0);" class="btn-status" ng-click="billPay();">
+                                        <span>缴费</span>
+                                    </a>
+                                    <a ng-if="item.BillStatus == 2 || item.BillStatus == 4"
+                                       href="javascript:void(0);" class="btn-status" ng-click="billRefund();" style="background-color: lightsteelblue;">
+                                        <span>退费</span>
+                                    </a>
+                                    <a ng-if="item.BillStatus == 1 || item.BillStatus == 4"
+                                       href="javascript:void(0);" class="btn-status"
+                                       style="background-color: indianred;margin-left: 10%;" ng-click="canBill();">
+                                        <span>作废</span>
+                                    </a>
+                                    <a ng-if="item.BillStatus == 2"
+                                       href="javascript:void(0);" class="btn-status" ng-click="billPay();" style="margin-left: 10px">
+                                        <span>补交</span>
+                                    </a>
+                                    <a ng-if="item.BillStatus == 2"
+                                       href="javascript:void(0);" class="btn-status" ng-click="finishBill();" style="margin-left: 10px;background-color: limegreen;">
+                                        <span>结账</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 账单列表 End -->
+                </div>
+            </div>
+        </div>
+        <div class="left_border a_right" ng-show="isApp" id="patientDetail">
+            <!-- 患者基本信息 Begin -->
+            <div class="patient-info-detail">
+                <div class="lf_title_mg row_spanInfo left_title left_space">
+                    <div class="cus_input">
+                    <span style="background-color: {{currentPatient.Level.Color}};" class="head-image"
+                          ng-class="{'circle_complete_big sex-man': currentPatient.Appoint.Gender==1,
+                        'circle_complete_big sex-woman': currentPatient.Appoint.Gender==2}">{{currentPatient.Appoint.PatientName}}</span>
+                    </div>
+                    <div class="QR_img_box">
+                        <a ng-hide="currentPatient.QRCodes" class="icon-qrcode" ng-click="getQRCode();" title="点击生成二维码"></a>
+                        <img ng-show="currentPatient.QRCodes" ng-src="{{currentPatient.QRCodes}}" style="width: 70px;height: 70px;white-space: normal;">
+                    </div>
+                </div>
+                <div class="lf_bd_h">
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div>
+                            <span class="item_span_1">账户余额: </span>
+                            <span class="item_span_1" ng-bind="currentPatient.Account.Amount | currency: '￥'"></span>
+                            <span class="item_span_1" style="float: right;margin-left: 5px;font-size: 20px;"><a href="javascript:void(0);" ng-click="amountRecharge();" class="icon-credit-card" title="账户管理"></a></span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span_1 indent_1">保险号: </span>
+                            <span class="item_span_1" ng-bind="currentPatient.PatientInfo.InsuranceNo"></span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span_1">会员卡号: </span>
+                            <span class="item_span_1" ng-bind="currentPatient.PatientInfo.CardNo"></span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span_1">保险种类: </span>
+                            <span class="item_span_1" ng-bind="convertInsuranceType(currentPatient.PatientInfo.InsuranceType)"></span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span_1 indent_1">社保号: </span>
+                            <span class="item_span_1">{{currentPatient.PatientInfo.SocialSecurityNo}}</span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span">微信绑定: </span>
+                            <span class="item_span" ng-bind="StateTexts(currentPatient.PatientInfo.OpenID)"></span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span_1 indent_2">医生: </span>
+                            <span class="patient_type">{{currentPatient.Appoint.DoctorName}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span_1 indent_2">医生: </span>
+                            <select class="form-control input-sm width_custom" name="patientType"
+                                    ng-model="currentPatient.Appoint.DoctorID"
+                                    ng-options="x.UserID as x.UserName for x in DoctorList"></select>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span_1 indent_2">状态: </span>
+                            <span class="patient_type" ng-bind="StateText(currentPatient.Appoint.Status)"></span>
+                            <a ng-hide="currentPatient == null" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span_1 indent_2">状态: </span>
+                            <select class="form-control input-sm width_custom" name="patientType"
+                                    ng-model="currentPatient.Appoint.Status"
+                                    ng-options="x.Value as x.Text for x in appointStatusList"></select>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span">{{appointTypeText(currentPatient.Appoint.AppointType)}}事项: </span>
+                            <span class="item_span">{{currentPatient.Appoint.AppointItemName}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span_1">{{appointTypeText(currentPatient.Appoint.AppointType)}}事项: </span>
+                            <div class="list" style="width: 70%;display: inline-block;">
+                                <input type="text" placeholder="请选择预约事项" class="autoSelect form-control input-sm"
+                                       name="appointmentItemsList2"
+                                       id="appointmentItemsList2"
+                                       ng-focus="focusShow($event,'dataDepartment2');" ng-blur="blurHide('appointmentItemsList2','dataDepartment2')"
+                                       ng-model="consultantHospitalDepartmentName">
+                                <ul style="display:none;" id="dataDepartment2">
+                                    <li class="first" ng-repeat="Category in appointmentItems">
+                                        <a href="#" class="inactive"
+                                           ng-click="inactiveClick($event);"
+                                           ng-bind="Category.Category.Name"></a>
+                                        <ul style="display: none">
+                                            <li class="second"
+                                                ng-repeat="SubCategories in Category.SubCategories">
+                                                <a href="#"
+                                                   ng-click="inactiveClick($event);"
+                                                   ng-bind="SubCategories.SubCategory.Name"></a>
+                                                <ul style="display: none">
+                                                    <li class="three"
+                                                        ng-repeat="item in SubCategories.Items">
+                                                        <a href="#"
+                                                           ng-click="selectAppointItem(item);"
+                                                           ng-bind="item.Name"></a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span_1">预约时间: </span>
+                            <span class="item_span_1">{{currentPatient.Appoint.BeginTime}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit" style="height: 60px;">
+                            <span class="item_span_1">开始时间: </span>
+                            <input id="workdayBegin" type="text" class="form-control input-sm width_custom item_span_1" name="workTime2"
+                                   placeholder="开始时间" ng-model="currentPatient.Appoint.BeginTime" style="width: 70%;">
+                            <div>
+                                <span class="item_span_1">结束时间: </span>
+                                <input id="workdayEnd" type="text" class="form-control input-sm width_custom item_span_1" name="workTime3"
+                                       placeholder="结束时间" ng-model="currentPatient.Appoint.EndTime" style="width: 70%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span_1">患者类型: </span>
+                            <span class="item_span_1">{{currentPatient.Level.Name}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit" style="position: relative;">
+                            <span class="item_span_1">患者类型: </span>
+                            <input type="text" class="form-control input-sm width_custom" id="levelInDetail"
+                                   placeholder="请输入患者类型"
+                                   ng-model="currentPatient.Level.Name"
+                                   ng-change="changePatientLevel()">
+                            <span ng-click="colorButtonClick();" style="background-color: {{currentPatient.Level.Color}};" class="square_disable color-button"></span>
+                            <input id="colorInDetail" style="width: 20px; position: absolute;left:220px" type="color" ng-model="currentPatient.Level.Color">
+                            <div style="margin-left: 64px;width:40%;position: absolute;background: #fff; -webkit-border-radius: 4px; -moz-border-radius: 4px;border-radius: 4px;box-shadow: 0 0 3px #999;">
+                                <div ng-repeat="template in searchPatientLevels">
+                                    <span ng-click="searchTemplateClick(template)">{{template.Name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span_1">电话号码:</span>
+                            <span class="item_span">{{currentPatient.Appoint.Mobile}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span_1">电话号码:</span>
+                            <input type="text" class="form-control input-sm width_custom" name="mobile" id="mobile1"
+                                   placeholder="请输入电话号码"
+                                   ng-model="currentPatient.Appoint.Mobile">
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span indent_2">来源: </span>
+                            <span class="item_span">{{currentPatient.Source.Name}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span indent_2">来源: </span>
+                            <select class="form-control input-sm width_custom"
+                                    ng-model="currentPatient.Appoint.PatientSourceID"
+                                    ng-options="x.PatientSourceID as x.Name for x in PatientSourceList">
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span indent_2" style="height:38px;float: left;">备注: </span>
+                            <span class="item_span" style="display:inline-block; width:60%;height: 38px;overflow-wrap: break-word;overflow-y: scroll;">{{currentPatient.Appoint.Remark}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.Appoint.Status == 4" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span indent_2">备注: </span>
+                            <input name="remark" type="text" class="form-control input-sm width_custom"
+                                   placeholder="其他联系方式"
+                                   ng-model="currentPatient.Appoint.Remark">
+                        </div>
+                    </div>
+                </div>
+                <div class="lf_end">
+                    <div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'save-appoint-disabled plat_wid':currentPatient==null,'plat_wid save-appoint':currentPatient!=null}"
+                              ng-click="saveAppoint();" title="保存">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'plat_wid delete-appoint-disabled plat_wid':(currentPatient == null || (currentPatient.Appoint.Status != 1 && currentPatient.Appoint.Status != 5))
+                                     ,'delete-appoint plat_wid':(currentPatient != null && (currentPatient.Appoint.Status == 1 || currentPatient.Appoint.Status == 5))}"
+                              ng-click="deleteAppoint();" title="取消预约">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'show-add-appoint plat_wid':(currentPatient != null && (currentPatient.Appoint.Status == 3 || currentPatient.Appoint.Status == 4)),
+                         'show-add-appoint-disabled plat_wid':(currentPatient==null || (currentPatient.Appoint.Status != 3 && currentPatient.Appoint.Status != 4))}"
+                              ng-click="showAddAppoint(1);" title="复诊预约">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'show-add-visit plat_wid':(currentPatient != null && currentPatient.Appoint.Status == 4),
+                           'show-add-visit-disabled plat_wid':(currentPatient==null || currentPatient.Appoint.Status != 4)}"
+                              ng-click="showAddVisit(1);" title="新增回访">
+                        </span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'add-charge plat_wid':(currentPatient != null && currentPatient.Appoint.Status != 1 && currentPatient.Appoint.Status != 2),
+                            'add-charge-disabled plat_wid':(currentPatient==null || currentPatient.Appoint.Status == 1 || currentPatient.Appoint.Status == 2 || currentPatient.Appoint.Status == 5)}"
+                              ng-click="addCharge();" title="创建账单">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'go-to-detail-page plat_wid':currentPatient!=null,'go-to-detail-page-disabled plat_wid':currentPatient==null}"
+                              ng-click="gotoDetailPage(0);" title="查看详情">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'edit-medical-record plat_wid':(currentPatient != null && (currentPatient.Appoint.Status == 3 || currentPatient.Appoint.Status == 4)),
+                         'edit-medical-record-disabled plat_wid':(currentPatient == null || (currentPatient.Appoint.Status != 3 && currentPatient.Appoint.Status != 4))}"
+                              ng-click="editMedicalRecord();" title="编辑病例" ng-show="(isShowAllOperate || isDoctor)">
+                        </span>
+                        </div>
+                        <div class="plat_wid2">
+                        <span ng-class="{'change-appoint-disabled plat_wid':(currentPatient == null || (currentPatient.Appoint.Status != 1 && currentPatient.Appoint.Status != 5))
+                             ,'change-appoint plat_wid':(currentPatient != null && (currentPatient.Appoint.Status == 1 || currentPatient.Appoint.Status == 5))}"
+                              ng-click="goToAppointManagement();" title="改期" ng-show="(isShowAllOperate || isDoctor)">
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 患者基本信息 End -->
+        </div>
+        <div class="left_border a_right" ng-show="isVis" id="visitDetail">
+            <!-- 患者基本信息 Begin -->
+            <div class="patient-info-detail">
+                <div class="lf_title_mg row_spanInfo left_title left_space">
+                    <div class="cus_input">
+                    <span style="background-color: {{currentPatient.currentVisit.Level.Color}};" class="head-image"
+                          ng-class="{'circle_complete_big sex-man': currentPatient.currentVisit.Visit.Gender==1,
+                        'circle_complete_big sex-woman': currentPatient.currentVisit.Visit.Gender==2}"
+                          ng-bind="currentPatient.currentVisit.Visit.PatientName"></span>
+                    </div>
+                    <div class="QR_img_box">
+                        <a ng-hide="currentPatient.QRCodes" class="icon-qrcode" ng-click="getQRCode();" title="点击生成二维码"></a>
+                        <img ng-show="currentPatient.QRCodes" ng-src="{{currentPatient.QRCodes}}" style="width: 70px;height: 70px;white-space: normal;">
+                    </div>
+                </div>
+                <div class="lf_bd_h">
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span_1">接诊医生:</span>
+                            <span class="patient_type">{{currentPatient.currentVisit.Visit.TreatDoctorName}}</span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span">回访人员: </span>
+                            <span class="item_span">{{currentPatient.currentVisit.Visit.VisitorName}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.currentVisit.Visit.Status == 2" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span">回访人员: </span>
+                            <select name="visitor" class="form-control input-sm width_custom" ng-model="currentPatient.currentVisit.Visit.VisitorName"
+                                    ng-options="x as x for x in DoctorNameList">
+                                <option value="">请选择回访人员</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span">回访时间: </span>
+                            <span class="item_span">{{currentPatient.currentVisit.Visit.VisitTime}}</span>
+                            <a ng-hide="currentPatient == null || currentPatient.currentVisit.Visit.Status == 2" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span">回访时间: </span>
+                            <input name="remark" type="text" class="form-control input-sm width_custom"
+                                   placeholder="回访时间" name="VisitTime2" id="VisitTime2"
+                                   ng-model="currentPatient.currentVisit.Visit.VisitTime">
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span" style="height:38px;float: left;">回访内容: </span>
+                            <span class="item_span" style="display:inline-block; width:60%;height: 38px;overflow-wrap: break-word;overflow-y: scroll;">{{currentPatient.currentVisit.Visit.VisitContent}}</span>
+                            <a ng-hide="currentPatient == null" href="javascript:" ng-click="edit($event);">
+                                <img alt=""
+                                     src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span">回访内容: </span>
+                            <input name="remark" type="text" class="form-control input-sm width_custom"
+                                   placeholder="回访内容"
+                                   ng-model="currentPatient.currentVisit.Visit.VisitContent">
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span" style="height:38px;float: left;">回访结果: </span>
+                            <span class="item_span" style="display:inline-block; width:60%;height: 38px;overflow-wrap: break-word;overflow-y: scroll;">{{currentPatient.currentVisit.Visit.VisitResult}}</span>
+                            <a ng-hide="currentPatient == null" href="javascript:" ng-click="edit($event);">
+                                <img alt="" src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span">回访结果: </span>
+                            <input name="VisitResult" type="text" class="form-control input-sm width_custom"
+                                   placeholder="回访结果"
+                                   ng-model="currentPatient.currentVisit.Visit.VisitResult">
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div class="div_show">
+                            <span class="item_span indent_2" style="height:38px;float: left;">备注: </span>
+                            <span class="item_span" style="display:inline-block; width:60%;height: 38px;overflow-wrap: break-word;overflow-y: scroll;">{{currentPatient.currentVisit.Visit.Remark}}</span>
+                            <a ng-hide="currentPatient == null" href="javascript:" ng-click="edit($event);">
+                                <img alt="" src="../Images/Common/edit.png"
+                                     class="icon_edit">
+                            </a>
+                        </div>
+                        <div class="div_edit">
+                            <span class="item_span indent_2">备注: </span>
+                            <input name="remark" type="text" class="form-control input-sm width_custom"
+                                   placeholder="备注"
+                                   ng-model="currentPatient.currentVisit.Visit.Remark">
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space row_float">
+                        <div>
+                            <span class="item_span_1">患者类型: </span>
+                            <span class="item_span_1">{{currentPatient.currentVisit.Visit.PatientLevelName}}</span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div>
+                            <span class="item_span_1">电话号码: </span>
+                            <span class="item_span">{{currentPatient.currentVisit.Visit.Mobile}}</span>
+                        </div>
+                    </div>
+                    <div class="row_space row_spanInfo left_space">
+                        <div class="div_show">
+                            <span class="item_span indent_2">来源: </span>
+                            <span class="item_span">{{currentPatient.currentVisit.Visit.PatientSourceName}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="lf_end">
+                    <div class="plat_wid">
+                        <span ng-class="{'plat_wid save-appoint-disabled':currentPatient==null,'save-appoint plat_wid':currentPatient!=null}"
+                              ng-click="saveVisit();" title="保存">
+                        </span>
+                    </div>
+                    <div class="plat_wid">
+                        <span ng-class="{'delete-visit-disabled plat_wid':(currentPatient == null || currentPatient.currentVisit.Visit.Status == 2)
+                                     ,'delete-visit plat_wid':(currentPatient != null && currentPatient.currentVisit.Visit.Status != 2)}"
+                              ng-click="deleteVisit();" title="取消回访">
+                        </span>
+                    </div>
+                    <div class="plat_wid">
+                        <span class="show-add-appoint plat_wid" ng-click="showAddAppoint(3);" title="复诊预约">
+                        </span>
+                    </div>
+                    <div class="plat_wid">
+                        <span ng-class="{'go-to-detail-page plat_wid':currentPatient!=null,'go-to-detail-page-disabled plat_wid':currentPatient==null}"
+                              ng-click="gotoDetailPage(1);" title="查看详情">
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- 患者基本信息 End -->
+        </div>
+        <div class="left_border a_right" ng-show="isBill" id="billDetail">
+            <!-- 账单基本信息 Begin -->
+            <div class="patient-info-detail">
+                <div ng-show="!isLoading">
+                    <div class="lf_title_mg row_spanInfo left_title left_space">
+                        <div class="cus_input">
+                            <span style="background-color: {{currentBillDetail.Level.Color}};" class="head-image"
+                                ng-class="{'circle_complete_big sex-man': currentBillDetail.Patient.Gender==1,
+                            'circle_complete_big sex-woman': currentBillDetail.Patient.Gender==2}"
+                                  ng-bind="currentBillDetail.Patient.Name"></span>
+                        </div>
+                        <div class="QR_img_box">
+                            <a ng-hide="currentBillDetail.QRCodes" class="icon-qrcode" ng-click="getBillQRCode();" title="点击生成二维码"></a>
+                            <img ng-show="currentBillDetail.QRCodes" ng-src="{{currentBillDetail.QRCodes}}" style="width: 70px;height: 70px;white-space: normal;">
+                        </div>
+                    </div>
+                    <div class="lf_bd_h">
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">账单号: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Bill.BillNoStr"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">总金额: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Bill.OriginalPrice | currency: '￥'"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">折扣: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Bill.Discount"></span>%
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">应收金额: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Bill.DueCharge | currency: '￥'"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">实收金额: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Bill.RealCharge | currency: '￥'"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">欠费: </span>
+                                <span class="patient_type" style="color: red;" ng-bind="currentBillDetail.Bill.Arrears | currency: '￥'"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">状态: </span>
+                                <span ng-if="currentBillDetail.Bill.BillStatus == 1"
+                                      class="patient_type cus_bill_status cus_bill_waiting_font_color">待收费</span>
+                                <span ng-if="currentBillDetail.Bill.BillStatus == 2"
+                                      class="patient_type cus_bill_status cus_bill_arrears_font_color">欠费</span>
+                                <span ng-if="currentBillDetail.Bill.BillStatus == 3"
+                                      class="patient_type cus_bill_status cus_bill_canceled_font_color">已作废</span>
+                                <span ng-if="currentBillDetail.Bill.BillStatus == 4"
+                                      class="patient_type cus_bill_status cus_bill_completed_font_color">已完成</span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">就诊医生: </span>
+                                <span class="patient_type">{{currentBillDetail.Appoint.DoctorName}}</span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">就诊事项: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Appoint.AppointItemName"></span>
+                            </div>
+                        </div>
+                        <div class="row_space row_spanInfo left_space">
+                            <div class="div_show">
+                                <span class="item_span_1" style="width: 25%;">就诊时间: </span>
+                                <span class="patient_type" ng-bind="currentBillDetail.Treat.CreateTime"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lf_end">
+                        <div class="plat_wid">
+                            <span class="go-to-detail-page plat_wid" ng-click="gotoDetailPage(2);" title="查看详情">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="loader" ng-show="isLoading">
+                    <div class="loader-inner line-spin-fade-loader">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 账单基本信息 End -->
+        </div>
+        <!-- 新增预约 Begin -->
+        <div class="modal fade" id="new_appoint" tabindex="-1" role="dialog" aria-hidden="true"
+             data-backdrop="static">
+            <div class="modal-dialog modal_appoint_h modal_appoint_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新增预约</span>
+                    </div>
+                    <div class="modal-body modal_appoint_body_h">
+                        <div class="appoint_top">
+                            <div class="appoint_pic">
+                                <img src="../Images/male.png" ng-show="addAppoint.Gender != 2" alt="暂无图片" style="height: 85%;margin: 15% 0 0 0;">
+                                <img src="../Images/female.png" ng-show="addAppoint.Gender == 2" alt="暂无图片" style="height: 85%;margin: 15% 0 0 0;">
+                            </div>
+                            <div class="appoint_rg">
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>姓名：</span>
+                                        <span class="post_item app_item_con cus_float_lf">
+                                        <input ng-show="canSelectPatient" type="text" id="app_p_name" name="name" class="form-control input-sm"
+                                               ng-model="addAppoint.PatientName"/>
+                                        <span ng-show="!canSelectPatient" ng-bind="addAppoint.PatientName"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>性别：</span>
+                                        <span class="post_item  app_item_con cus_float_lf">
+                                        <select ng-show="!disablePatientEdit" class="form-control input-sm" style="width: 40%;"
+                                                ng-model="addAppoint.Gender"
+                                                ng-options="x.Value as x.Text for x in genderList">
+                                        </select>
+                                        <span ng-show="disablePatientEdit && addAppoint.Gender == 1">男</span>
+                                        <span ng-show="disablePatientEdit && addAppoint.Gender != 1">女</span>
+                                        </span>
+                                    </div>
+                                    <div class="div_height half_rg">
+                                        <span class="post_item app_item_sec cus_float_lf">患者来源：</span>
+                                        <span class="post_item app_item_con cus_float_lf">
+                                        <select class="form-control input-sm" ng-disabled="disablePatientEdit"
+                                                ng-model="addAppoint.PatientSourceID"
+                                                ng-options="x.PatientSourceID as x.Name for x in PatientSourceList">
+                                                <option value="">请选择患者来源</option>
+                                        </select>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_sec cus_float_lf" ng-show="!disablePatientEdit">出生日期：</span>
+                                        <span class="post_item app_item_sec cus_float_lf" ng-show="disablePatientEdit">年龄：</span>
+                                        <span class="post_item app_item_con cus_float_lf" ng-show="!disablePatientEdit">
+                                        <input type="text" class="form-control input-sm ng-pristine ng-untouched ng-valid" id='birthday'   ng-model="addAppoint.Birthday" ng-show="!disablePatientEdit"/>
+                                    </span>
+                                        <span class="post_item app_item_con cus_float_lf" ng-show="disablePatientEdit" ng-bind="AgeText(addAppoint.Birthday);"></span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>电话：</span>
+                                        <span class="post_item app_item_con cus_float_lf">
+                                        <input ng-show="!disablePatientEdit" type="text" name="mobile" class="form-control input-sm"
+                                               ng-model="addAppoint.Mobile"/>
+                                        <span ng-show="disablePatientEdit" ng-bind="addAppoint.Mobile"></span>
+                                        </span>
+                                    </div>
+                                    <div class="div_height half_rg">
+                                        <span class="post_item app_item_sec cus_float_lf" ng-show="isRelation">关联关系：</span>
+                                        <span class="post_item app_item_con cus_float_lf" ng-show="isRelation">
+                                        <select class="form-control input-sm"
+                                                ng-model="addAppoint.Relation"
+                                                ng-options="x.Type as x.Name for x in relationList">
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf">备注：</span>
+                                        <span class="post_item app_item_con cus_float_lf">
+                                        <input ng-show="!disablePatientEdit" class="form-control input-sm" type="text"
+                                               ng-model="addAppoint.Remark"/>
+                                        <span ng-show="disablePatientEdit" ng-bind="addAppoint.Remark"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="appoint_middle">
+                            <div class="div_height app_space">
+                                <span class="post_item app_item_w">
+                                    <select class="form-control input-sm"
+                                              ng-model="addAppoint.AppointType"
+                                              ng-options="x.Value as x.Text for x in appointTypeList">
+                                    </select>
+                                </span>
+                                <span class="post_item app_item_w">
+                                    <select class="form-control input-sm"
+                                            ng-model="addAppoint.DoctorID"
+                                            ng-options="x.UserID as x.UserName for x in DoctorList">
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="div_height app_con_w app_space">
+                                <div class="list" style="display:inline-block;width: 100%;">
+                                    <input type="text" placeholder="请选择预约事项" class="autoSelect form-control input-sm"
+                                           name="appointmentItemsList"
+                                           id="appointmentItemsList"
+                                           ng-focus="focusShow($event,'dataDepartment');" ng-blur="blurHide('appointmentItemsList','dataDepartment')"
+                                           ng-model="consultantHospitalDepartmentName">
+                                    <ul style="display:none;" id="dataDepartment">
+                                        <li class="first" ng-repeat="Category in appointmentItems">
+                                            <a href="#" class="inactive"
+                                               ng-click="inactiveClick($event);"
+                                               ng-bind="Category.Category.Name"></a>
+                                            <ul style="display: none">
+                                                <li class="second" ng-repeat="SubCategories in Category.SubCategories">
+                                                    <a href="#"
+                                                       ng-click="inactiveClick($event);"
+                                                       ng-bind="SubCategories.SubCategory.Name"></a>
+                                                    <ul style="display: none">
+                                                        <li class="three"
+                                                            ng-repeat="item in SubCategories.Items">
+                                                            <a href="#"
+                                                               ng-click="selectDepartmentClick(item,1, Category.Category, SubCategories.SubCategory);"
+                                                               ng-bind="item.Name"></a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="app_cal_h">
+                                <input type="text" id="hideDate" ng-show="false"/>
+                                <div ui-calendar="uiConfig.calendar" class="span8 calendar"
+                                     ng-model="eventSources" calendar="myCalendar1" id="appoint_time_view"></div>
+                            </div>
+                        </div>
+                        <div class="appoint_end">
+                            <span class="post_item btn_w"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="addAppointToDB();">保 存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增预约 End -->
+        <!-- 新增回访 Begin -->
+        <div class="modal fade" id="new_visit" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal_visit_w modal_visit_h">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新增回访</span>
+                    </div>
+                    <div class="modal-body modal_visit_body_h">
+                        <div class="modal_visit_top">
+                            <div>
+                                <div class="half_lf cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">姓名：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-show="!canSelectPatientForVisit" ng-bind="addVisit.PatientName"></span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-show="canSelectPatientForVisit">
+                                        <input class="form-control input-sm" id="tags" ng-model="addVisit.PatientName"  ng-change="changeSelectedPatient()">
+                                    <span ng-show="!canSelectPatientForVisit" ng-bind="addVisit.PatientName"></span>
+                                    </span>
+                                </div>
+                                <div class="half_rg cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">性别：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-bind="GenderText(addVisit.Gender)"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="half_lf cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">联系方式：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-bind="addVisit.Mobile"></span>
+                                </div>
+                                <div class="half_rg cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">就诊日期：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-bind="addVisit.TreatTime"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="half_lf cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">就诊事项：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-show="!canSelectAppoint" ng-bind="currentPatient.Appoint.AppointItemName"></span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-show="canSelectAppoint">
+                                        <select name="visitItem" class="form-control input-sm"
+                                                ng-model="selectedAppoint"
+                                                ng-options="x as (x.Appoint.AppointItemName + ' - ' + x.Appoint.BeginTime) for x in completeTreatList">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="half_rg cus_float_lf">
+                                    <span class="post_item item_lb_w cus_float_lf">就诊医生：</span>
+                                    <span class="post_item item_con_w cus_float_lf" ng-bind="addVisit.TreatDoctorName"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="split_ln"></div>
+                        <div class="modal_visit_middle">
+                            <div class="item_space">
+                                <span class="post_item item_fr_w"><i class="color_red">*</i>回访人员：</span>
+                                <span class="post_item item_oth_w">
+                                    <select name="visitor" class="form-control input-sm" ng-model="selectedVisitor"
+                                            ng-options="x as x.UserName for x in DoctorList">
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="item_space">
+                                <span class="post_item item_fr_w"><i class="color_red">*</i>回访时间：</span>
+                                <span class="post_item item_oth_w">
+                                    <input type="text" id="visitTime" class="form-control input-sm" placeholder="回访时间"
+                                           ng-model="addVisit.VisitTime" name="visitTime">
+                                </span>
+                            </div>
+                            <div class="item_space">
+                                <span class="post_item item_fr_w"><i class="color_red">*</i>回访事项：</span>
+                                <div class="post_item item_oth_w">
+                                    <div class="list cus_btn_width" style="display:inline-block;">
+                                    <input type="text" placeholder="请选择回访事项" class="autoSelect form-control input-sm"
+                                           name="visitItemsList"
+                                           id="visitItemsList"
+                                           ng-focus="focusShow($event,'visitItems');" ng-blur="blurHide('visitItemsList','visitItems')"
+                                           ng-model="consultantHospitalDepartmentName">
+                                    <ul style="display:none;" id="visitItems">
+                                        <li class="first" ng-repeat="Category in visitItemsList">
+                                            <a href="#" class="inactive"
+                                               ng-click="inactiveClick($event);"
+                                               ng-bind="Category.Category.Name"></a>
+                                            <ul style="display: none">
+                                                <li class="second"
+                                                    ng-repeat="SubCategories in Category.SubCategories">
+                                                    <a href="#"
+                                                       ng-click="inactiveClick($event);"
+                                                       ng-bind="SubCategories.SubCategory.Name"></a>
+                                                    <ul style="display: none">
+                                                        <li class="three"
+                                                            ng-repeat="item in SubCategories.Items">
+                                                            <a href="#"
+                                                               ng-click="selectDepartmentClick(item,0);"
+                                                               ng-bind="item.Name"></a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="item_space item_area_h">
+                                <span class="post_item item_fr_w">回访内容：</span>
+                                <span class="post_item item_sec_w item_area_h">
+                                    <textarea name="visitContent" class="item_area_h form-control input-sm" placeholder="回访内容"
+                                              style="resize: none"
+                                              ng-model="addVisit.VisitContent"></textarea>
+                                </span>
+                            </div>
+                            <div class="item_space item_area_h">
+                                <span class="post_item item_fr_w">回访结果：</span>
+                                <span class="post_item item_sec_w item_area_h">
+                                    <textarea name="visitResult" class="item_area_h form-control input-sm" placeholder="回访结果"
+                                              style="resize: none"
+                                              ng-model="addVisit.VisitResult"></textarea>
+                                </span>
+                            </div>
+                            <div class="item_area_h">
+                                <span class="post_item item_fr_w">备注：</span>
+                                <span class="post_item item_sec_w item_area_h">
+                                    <textarea class="item_area_h form-control input-sm" placeholder="回访备注" style="resize: none"
+                                              ng-model="addVisit.Remark"></textarea>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="modal_visit_end">
+                            <span class="post_item modal_visit_btn_span">
+                                <button class="btn cus_btn_color cus_btn_width" ng-click="addVisitToDB();">保 存</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增回访 End -->
+        <!-- 创建账单 Begin -->
+        <div class="modal fade" id="charge" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal_bill_h modal_bill_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新建账单</span>
+                    </div>
+                    <div class="modal-body modal_bill_body_h">
+                        <div class="modal_bill_top">
+                            <span class="modal_bill_lf top_name" style="background-color: {{currentPatient.Level.Color}}" ng-bind="currentPatient.PatientInfo.Name"></span>
+                            <div class="modal_bill_rg">
+                                <div class="div_height">
+                                    <div class="bill_item cus_float_lf">
+                                        <span class="post_item bill_fr cus_float_lf">就诊事项：</span>
+                                        <span class="post_item bill_sec cus_float_lf" ng-bind="currentPatient.Appoint.AppointItemName"></span>
+                                    </div>
+                                    <div class="bill_item cus_float_lf">
+                                        <span class="post_item bill_fr cus_float_lf">就诊时间：</span>
+                                        <span class="post_item bill_sec cus_float_lf" ng-bind="appointTimeText(currentPatient.Appoint.BeginTime, currentPatient.Appoint.EndTime)"></span>
+                                    </div>
+                                </div>
+                                <div class="div_height bill_top_temp">
+                                    <div class="bill_item cus_float_lf">
+                                        <span class="post_item bill_fr cus_float_lf">就诊医生：</span>
+                                        <span class="post_item bill_sec cus_float_lf" ng-bind="currentPatient.Appoint.DoctorName"></span>
+                                    </div>
+                                    <div class="bill_item cus_float_lf">
+                                        <span class="post_item bill_fr cus_float_lf">检查护士：</span>
+                                        <span class="post_item bill_sec cus_float_lf" ng-bind="currentPatient.Appoint.NurseName"></span>
+                                    </div>
+                                    <span class="post_item modal_bill_btn_out">
+                                        <button class="btn btn-sm .btn-xs cus_btn_color cus_btn_width" ng-click="printChargeOrder();"><span class="icon-print"></span>&nbsp;打印账单</button>
+                                    </span>
+                                </div>
+                                <div class="div_height">
+                                    <div class="total_fee">
+                                        <span class="post_item">总金额：</span>
+                                        <span class="post_item" id="sp_TotalPrice" ng-bind="originalFee | currency: '￥'"></span>
+                                    </div>
+                                    <span class="post_item modal_bill_btn_out">
+                                        <button class="btn btn-sm .btn-xs cus_btn_color cus_btn_width" id="costPattern" ng-click="checkChargePattern();">项目明细</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal_bill_middle">
+                            <div class="table_h">
+                                <div ng-class="{'bill_table_w_pr': !ChargePattern, 'bill_table_w_all': ChargePattern}">
+                                    <table class="table" id="fastCharge">
+                                        <thead>
+                                        <tr class="bill_table_head">
+                                            <td style="width:20%;">收费项目</td>
+                                            <td style="width:20%;">应收金额</td>
+                                            <td style="width:30%;">费用说明</td>
+                                            <td style="width:30%;">备注</td>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="bill_table_item" ng-repeat="x in MainCategoryList">
+                                            <td class="bill_table_item_name" style="width:20%;">{{x.Name}}</td>
+                                            <td style="width:20%;">
+                                                <input type="text" class="form-control item-price" placeholder="金额（整数，精确到两位小数点）"
+                                                       ng-model="x.Price" ng-change="MainCategorySum(x)" ng-blur="checkPriceFormat(x, $event, 1);">
+                                            </td>
+                                            <td style="width:30%;">
+                                        <span ng-if="x.Price" style="color: green;">收费金额为：<span class="icon-plus"></span>
+                                            {{x.Price | currency: "￥"}}
+                                        </span>
+                                            </td>
+                                            <td style="width:30%;">
+                                                <textarea placeholder="备注" ng-model="x.Remark" style="resize: none;" class="form-control"></textarea>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table fleft" id="detailedCharge" ng-hide="ChargePattern">
+                                        <thead>
+                                        <tr class="bill_table_head">
+                                            <td style="width: 25%;">收费项目</td>
+                                            <td style="width: 15%;">单价</td>
+                                            <td style="width: 10%;">单位</td>
+                                            <td style="width: 15%;">数量</td>
+                                            <td style="width: 15%;">系统计算金额</td>
+                                            <td style="width: 15%;">应收金额</td>
+                                            <td style="width: 5%;white-space: nowrap;">操作</td>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="bill_table_item" ng-repeat="y in detailItemsList">
+                                            <td class="bill_table_item_name">{{y.Item.Name}}</td>
+                                            <td>{{y.Price.Price | currency:"￥"}}</td>
+                                            <td>{{y.Price.Unit}}</td>
+                                            <td>
+                                                <input type="text" class="form-control" ng-model="y.amount" ng-change="detailItemsSum(y)"
+                                                       placeholder="数量" ng-blur="checkPriceFormat(y, $event, 2)">
+                                            </td>
+                                            <td>
+                                            <span ng-if="y.amount && !y.isRefund" style="color:green;">
+                                                <span>{{calculateSum(y) | currency: "￥"}}</span>
+                                            </span>
+                                            </td>
+                                            <td>
+                                                <input type="text" placeholder="保留两位小数" class="form-control" ng-model="y.planSum" ng-change="calculatePlanSum(y)">
+                                            </td>
+                                            <td><a href="javascript:" ng-click="deleteChargeItem(y);" class="icon-trash"></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="ItemTree" class="bill_table_item" ng-hide="ChargePattern" style="width:20%; height: 100%;overflow-y: auto;float: right;"></div>
+                            </div>
+                            <div class="end_h">
+                                <span class="post_item">账单折扣（%）：</span>
+                                <span class="post_item"><input id="discount" ng-model="discount" type="number" class="form-control" placeholder="保留一位小数"
+                                             ng-change="calculateDiscountFee();"></span>
+                                <span class="post_item item_lf">折扣总金额：</span>
+                                <span class="post_item" ng-bind="planTotalFee | currency: '￥'"></span>
+                                <span class="post_item item_lf">备注：</span>
+                                <span class="post_item"><input type="text" class="form-control" placeholder="备注"
+                                             ng-model="Description" ></span>
+                            </div>
+                        </div>
+                        <div class="modal_bill_end">
+                            <span class="post_item modal_bill_btn_span">
+                                <button class="btn cus_btn_color cus_btn_width" ng-click="saveCharge();">保 存</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 创建账单 End -->
+        <!-- 收费 Begin -->
+        <div class="modal fade" id="pay" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog billPay_modal_w billPay_modal_h">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">账单缴费</span>
+                    </div>
+                    <div class="modal-body billPay_bd_h">
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊患者：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Patient.Name"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊医生：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="currentBillDetail.Appoint.DoctorName"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊事项：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Appoint.AppointItemName"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊日期：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="convertToDateTime(currentBillDetail.Treat.CreateTime) | date: 'yyyy-MM-dd hh:mm'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">账单信息</span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账单号：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Bill.BillNoStr"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">创建时间：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="convertToDateTime(currentBillDetail.Bill.CreateTime) | date: 'yyyy-MM-dd hh:mm'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">应收金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Bill.DueCharge | currency: '￥'"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">实收金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="currentBillDetail.Bill.RealCharge | currency: '￥'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">欠费金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg color_red" ng-bind="currentBillDetail.Bill.Arrears | currency: '￥'"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账单状态：</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 1"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_waiting_font_color">待收费</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 2"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_arrears_font_color">欠费</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 3"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_canceled_font_color">已作废</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 4"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_completed_font_color">已完成</span>
+                        </div>
+                        <div class="bl_sp bl_h_1">
+                            <div class="bl_h cus_float_lf bell_item_w_1 txt_rg"><span>缴费项目：</span></div>
+                            <div class="bl_h_1 cus_float_lf bell_item_w_5 txt_lf lt_bodr">
+                                <div class="bl_h item_bk tlt_bodr">
+                                    <span class="item_w_h cus_float_lf txt_cen">缴费项目</span>
+                                    <span class="item_w_h cus_float_lf txt_cen">项目单价</span>
+                                </div>
+                                <div class="bl_list_h">
+                                    <div ng-repeat="item in currentBillDetail.Costs">
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-if="item.CostItem" ng-bind="item.CostItem"></span>
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-if="!item.CostItem" ng-bind="item.CategoryName"></span>
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-bind="item.Price | currency: '￥'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">账户缴费</span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账户余额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg"><span ng-bind="accountBalance | currency: '￥'"></span></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">缴费金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf"><input id="account_pay_amount" class="form-control input-sm" type="number" ng-model="accountPayAmount" ng-change="calculateBalance();"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">其他方式缴费</span>
+                        </div>
+                        <div class="bl_sp bl_h_2">
+                            <div class="bl_h bl_sp">
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">缴费方式：</span>
+                                <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg">
+                                    <select class="form-control input-sm" ng-options="item.Type as item.Name for item in ChargeTypeList"
+                                              ng-model="payRequest.PaymentCategory"></select>
+                                </span>
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">缴费金额：</span>
+                                <span class="bl_h cus_float_lf bell_item_w_4 txt_lf">
+                                    <input id="pay_amount" class="form-control input-sm" placeholder="缴费金额" type="number" ng-model="payAmount"
+                                             ng-change="calculateBalance();">
+                                </span>
+                            </div>
+                            <div class="bl_h">
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">备注：</span>
+                                <span class="bl_h_4 cus_float_lf bell_item_w_5 txt_lf">
+                                    <textarea class="form-control" placeholder="备注" ng-model="payRequest.Description" style="height: 100%;"></textarea>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">缴费金额计算</span>
+                        </div>
+                        <div class="bl_sp bl_h_3">
+                            <div class="bl_h">
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">缴费总金额：</span>
+                                <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="(accountPayAmount + payAmount) | currency: '￥'"></span>
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账单当前欠费：</span>
+                                <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="payBalance | currency: '￥'" ng-class="{'color_red': payBalance > 0, 'color_green': payBalance <= 0}"></span>
+                            </div>
+                            <div class="bl_h">
+                                <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">应找零金额：</span>
+                                <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="giveChange | currency: '￥'"></span>
+                            </div>
+                        </div>
+                        <div class="bl_sp bl_h txt_cen">
+                            <span class="bell_item_w_2"><button class="btn cus_btn_color cus_btn_width" ng-click="savePay(1);">确 定</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 收费 End -->
+        <!-- 退费 Begin -->
+        <div class="modal fade" id="bill_refund" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog billPay_modal_w bl_refund_h">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">账单退费</span>
+                    </div>
+                    <div class="modal-body bl_refund_bd_h">
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊患者：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Patient.Name"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊医生：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="currentBillDetail.Appoint.DoctorName"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊事项：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Appoint.AppointItemName"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">就诊日期：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="convertToDateTime(currentBillDetail.Treat.CreateTime) | date: 'yyyy-MM-dd hh:mm'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">账单信息</span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账单号：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Bill.BillNoStr"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">创建时间：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="convertToDateTime(currentBillDetail.Bill.CreateTime) | date: 'yyyy-MM-dd hh:mm'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">应收金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg" ng-bind="currentBillDetail.Bill.DueCharge | currency: '￥'"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">实收金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf" ng-bind="currentBillDetail.Bill.RealCharge | currency: '￥'"></span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">欠费金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg color_red" ng-bind="currentBillDetail.Bill.Arrears | currency: '￥'"></span>
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">账单状态：</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 1"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_waiting_font_color">待收费</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 2"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_arrears_font_color">欠费</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 3"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_canceled_font_color">已作废</span>
+                            <span ng-if="currentBillDetail.Bill.BillStatus == 4"
+                                  class="bl_h cus_float_lf bell_item_w_4 txt_lf cus_bill_completed_font_color">已完成</span>
+                        </div>
+                        <div class="bl_sp bl_h_1">
+                            <div class="bl_h cus_float_lf bell_item_w_1 txt_rg"><span>缴费项目：</span></div>
+                            <div class="bl_h_1 cus_float_lf bell_item_w_5 txt_lf lt_bodr">
+                                <div class="bl_h item_bk tlt_bodr">
+                                    <span class="item_w_h cus_float_lf txt_cen">缴费项目</span>
+                                    <span class="item_w_h cus_float_lf txt_cen">项目单价</span>
+                                </div>
+                                <div class="bl_list_h">
+                                    <div ng-repeat="item in currentBillDetail.Costs">
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-if="item.CostItem" ng-bind="item.CostItem"></span>
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-if="!item.CostItem" ng-bind="item.CategoryName"></span>
+                                        <span class="item_w_h cus_float_lf txt_cen txt_over" ng-bind="item.Price | currency: '￥'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="tlt_bk bell_item_w_1">退费信息</span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">退费方式：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf eq_mg">
+                                <select class="form-control input-sm" ng-options="item.Type as item.Name for item in RefundTypeList"
+                                        ng-model="payRequest.PaymentCategory"></select>
+                            </span>
+                        </div>
+                        <div class="bl_sp bl_h">
+                            <span class="bl_h cus_float_lf bell_item_w_1 txt_rg">退费金额：</span>
+                            <span class="bl_h cus_float_lf bell_item_w_4 txt_lf">
+                                <input id="refund_amounts" class="form-control input-sm" placeholder="退费金额" type="text" ng-model="refundAmount"
+                                       ng-change="calculateBalance();">
+                            </span>
+                        </div>
+                        <div class="bl_sp ref_h_1 txt_cen">
+                            <span class="bell_item_w_2"><button class="btn cus_btn_color cus_btn_width" ng-click="savePay(2);">确 定</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 退费 End -->
+        <!-- 管理账户 Begin -->
+        <div class="modal fade" id="account_manage" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal_account_h modal_account_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">账户管理</span>
+                    </div>
+                    <div class="modal-body modal_account_body_h">
+                        <div class="account_top">
+                            <div class="acc_pic">
+                                <span>
+                                    <img src="../Images/male.png" alt="暂无图片" ng-show="currentPatient.PatientInfo.Gender == 1" style="height: 100%;">
+                                    <img src="../Images/female.png" alt="暂无图片" ng-show="currentPatient.PatientInfo.Gender != 1" style="height: 100%;">
+                                </span>
+                            </div>
+                            <div class="acc_info">
+                                <div><span class="post_item">病历号：</span><span class="post_item" ng-bind="currentPatient.PatientInfo.MedicalRecordNo"></span></div>
+                                <div><span class="post_item">姓名：</span><span class="post_item" ng-bind="currentPatient.PatientInfo.Name"></span></div>
+                                <div><span class="post_item">性别：</span><span class="post_item" ng-bind="GenderText(currentPatient.PatientInfo.Gender);"></span></div>
+                                <div>
+                                    <div class="acc_fee">
+                                        <span class="post_item">余额：</span>
+                                        <span class="post_item" ng-bind="account.Amount | currency: '￥'"></span>
+                                    </div>
+                                    <div class="acc_state">
+                                        <span class="post_item">账户状态：</span>
+                                        <span class="post_item acc_state_color_ok" ng-if="account.State == 0">正常</span>
+                                        <span class="post_item acc_state_color_no" ng-if="account.State != 0" style="color: red">冻结</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="account_middle">
+                            <div>
+                                <span id="recharge_tab" class="recharge account_tab account_tab_active" ng-click="activePanel('recharge');">充值</span>
+                                <span id="transfer_tab" class="transfer account_tab" ng-click="activePanel('transfer');">转账</span>
+                                <span id="refund_tab" class="refund account_tab" ng-click="activePanel('refund');">退款</span>
+                            </div>
+                            <div>
+                                <div id="recharge" class="cus_disabled cus_content_border">
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            输入金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <input id="recharge_amount" type="number" name="rechargeAmount" placeholder="保留小数点两位" class="form-control" style="display: inline-block;"
+                                                   ng-model="recharge.RechargeAmount">
+                                            <span class="icon-jpy" style="display: inline-block;color: green;"></span>
+                                        </div>
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            充值金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <span ng-bind="recharge.RechargeAmount | currency: '￥'" style="display: inline-block;width: 100%;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            充值方式：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <select class="form-control" ng-model="recharge.RechargeType"
+                                                    ng-options="item.Type as item.Name for item in ChargeTypeList">
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            操作人：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <span ng-if="currentUser.Body.UserType == 1">院长</span>
+                                            <span ng-if="currentUser.Body.UserType != 1" ng-bind="currentUser.Body.User.UserName"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height" style="height: 60px;">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            备注：
+                                        </div>
+                                        <div class="col-lg-6 item_span_2 cus_recharge_line_height">
+                                            <textarea class="form-control" ng-model="recharge.Remark" placeholder="备注" style="resize: none;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-12 cus_recharge_line_height cus_recharge_float" style="text-align: center">
+                                            <button class="btn cus_btn_color_r" style="width: 20%" ng-click="updateAccount(1);">充 值</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="transfer" class="cus_disabled cus_content_border">
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            输入金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <input id="transfer_amount" type="number" name="transferAmount" placeholder="保留小数点两位" class="form-control" style="display: inline-block;"
+                                                   ng-model="transfer.TransferAmount">
+                                            <span class="icon-jpy" style="display: inline-block;color: green;"></span>
+                                        </div>
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            转入金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <span ng-bind="transfer.TransferAmount | currency: '￥'" style="display: inline-block;width: 100%;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            转入账户：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <input class="form-control" id="language" placeholder="请输入转入账户姓名">
+                                            <input type="hidden" id="language-id" ng-model="transfer.SelectedPatientID">
+                                        </div>
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            操作人：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <span ng-if="currentUser.Body.UserType == 1">院长</span>
+                                            <span ng-if="currentUser.Body.UserType != 1" ng-bind="currentUser.Body.User.UserName"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height" style="height: 60px;">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            备注：
+                                        </div>
+                                        <div class="col-lg-6 item_span_2 cus_recharge_line_height">
+                                            <textarea class="form-control" ng-model="transfer.Remark" placeholder="备注" style="resize: none;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-12 cus_recharge_line_height cus_recharge_float" style="text-align: center">
+                                            <button class="btn cus_btn_color_r" style="width: 20%" ng-click="updateAccount(3);">转 出</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="refund" class="cus_disabled cus_content_border">
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            输入金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <input id="refund_amount" type="number" name="refundAmount" placeholder="保留小数点两位" class="form-control" style="display: inline-block;"
+                                                   ng-model="refund.RefundAmount">
+                                            <span class="icon-jpy" style="display: inline-block;color: green;"></span>
+                                        </div>
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            退款金额：
+                                        </div>
+                                        <div class="col-lg-3 item_span_2 cus_recharge_line_height">
+                                            <span ng-bind="refund.RefundAmount | currency: '￥'" style="display: inline-block;width: 100%;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            操作人：
+                                        </div>
+                                        <div class="col-lg-6 item_span_2 cus_recharge_line_height">
+                                            <span ng-if="currentUser.Body.UserType == 1">院长</span>
+                                            <span ng-if="currentUser.Body.UserType != 1" ng-bind="currentUser.Body.User.UserName"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height" style="height: 60px;">
+                                        <div class="col-lg-3 item_span_1 cus_recharge_line_height">
+                                            备注：
+                                        </div>
+                                        <div class="col-lg-6 item_span_2 cus_recharge_line_height">
+                                            <textarea class="form-control" ng-model="refund.Remark" placeholder="备注" style="resize: none;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row row_space cus_recharge_div_height">
+                                        <div class="col-lg-12 cus_recharge_line_height cus_recharge_float" style="text-align: center">
+                                            <button class="btn cus_btn_color_r" style="width: 20%" ng-click="updateAccount(2);">退 款</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="account_end">
+                            <div class="tab_title">
+                                <span style="display: inline-block;width: 10%;text-align: center;">操作</span>
+                                <span style="display: inline-block;width: 20%;text-align: center;">操作时间</span>
+                                <span style="display: inline-block;width: 10%;text-align: center;">收费方式</span>
+                                <span style="display: inline-block;width: 15%;text-align: center;">操作金额</span>
+                                <span style="display: inline-block;width: 15%;text-align: center;">余额</span>
+                                <span style="display: inline-block;width: 10%;text-align: center;">操作人</span>
+                                <span style="display: inline-block;width: 15%;text-align: center;">备注</span>
+                            </div>
+                            <div class="tab_con">
+                                <div ng-repeat="item in accountPipeLineList | orderBy: '-CreateTime'" style="height: 30px;line-height:30px;border-bottom-style: solid; border-width: 1px;border-color: lightgray;">
+                                    <span style="display: inline-block;width: 10%;text-align: center;float: left;" ng-bind="convertOperator(item.AccountOperateType)"></span>
+                                    <span style="display: inline-block;width: 20%;text-align: center;float: left;" ng-bind="item.CreateTime"></span>
+                                    <span style="display: inline-block;width: 10%;text-align: center;float: left;" ng-bind="convertChargeType(item.PaymentCategory)"></span>
+                                    <span style="display: inline-block;width: 18%;text-align: center;float: left;" ng-bind="item.Amount | currency: '￥'"></span>
+                                    <span style="display: inline-block;width: 15%;text-align: center;float: left;" ng-bind="item.Balance | currency: '￥'"></span>
+                                    <span style="display: inline-block;width: 10%;text-align: center;float: left;" ng-bind="item.PayeeName"></span>
+                                    <span style="display: inline-block;width: 15%;text-align: center;float: left;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" ng-bind="item.Description"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 管理账户 End -->
+        <!-- 账单打印 Begin -->
+        <section style="display:none;">
+            <div id="charge_order">
+                <div class="print_space"><span class="print_title">就诊信息</span></div>
+                <div>
+                    <div style="width:40%;display:inline-block;text-align:center;"><span>就诊事项：</span></div>
+                    <div style="display: inline-block;width: 50%;"><span>{{currentPatient.Appoint.AppointItemName}}</span></div>
+                </div>
+                <div>
+                    <div style="width:40%;display:inline-block;text-align:center;"><span>就诊日期：</span></div>
+                    <div style="display: inline-block;width: 50%;"><span>{{currentPatient.Appoint.BeginTime}}</span></div>
+                </div>
+                <div>
+                    <div style="width:40%;display:inline-block;text-align:center;"><span>就诊医生：</span></div>
+                    <div style="display: inline-block;width: 50%;"><span>{{currentPatient.Appoint.DoctorName}}</span></div>
+                </div>
+                <div class="print_space"><span class="print_title">收费信息</span></div>
+                <div>
+                    <div class="print_space" style="width:30%;display:inline-block;text-align:center;">
+                        <span>收费项目</span>
+                    </div>
+                    <div class="print_space" style="width:20%;display:inline-block;text-align:center;">
+                        <span>收费金额</span>
+                    </div>
+                    <div class="print_space" style="width:30%;display:inline-block;text-align:center;">
+                        <span>费用说明</span>
+                    </div>
+                </div>
+                <div ng-repeat="item in chargeList">
+                    <div class="print_space" style="width:30%;display:inline-block;text-align:center;">
+                        <span ng-bind="item.CostItem"></span>
+                    </div>
+                    <div class="print_space" style="width:20%;display:inline-block;text-align:center;">
+                        <span ng-class="{'cus_color_refund': item.Price < 0, 'cus_color_profit': item.Price >= 0}" ng-bind="item.Price | currency: &quot;￥&quot;"></span>
+                    </div>
+                    <div class="print_space" style="width:30%;display:inline-block;text-align:center;">
+                        <span ng-bind="item.Information"></span>
+                    </div>
+                </div>
+                <div>
+                    <div style="width:30%;display:inline-block;text-align:center;">
+                        <span>费用总计：</span>
+                        <span ng-class="{'cus_color_refund': chargeTotal < 0, 'cus_color_profit': chargeTotal >= 0}" ng-bind="chargeTotal | currency: &quot;￥&quot;"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 账单打印 End -->
+        <patient></patient>
+        <tooth></tooth>
+        <template></template>
+    </div>
+</div>
+<footer class="footer body_hide">
+    <span class="footer_span">Copyright &copy;2017 niuluo-tech.cn</span>
+</footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/Jquery/CatalogTree.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/BootStrap/ui-bootstrap-tpls.min.js"></script>
+<script src="../js/Common/Jquery/moment.min.js"></script>
+<script src="../js/Common/Jquery/jQuery.print.min.js"></script>
+<script src="../js/Common/Jquery/jquery-smartMenu.min.js"></script>
+<script src="../js/Common/Jquery/fullcalendar-3.1.0.min.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Common/Jquery/gcal.min.js"></script>
+<script src="../js/Common/Angular/calendar.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+
+<script src="../js/Custom/common.min.js?v=20161027"></script>
+<script src="../js/Custom/platformMG.min.js?v=20161027"></script>
+<script src="../js/Custom/datedropper.min.js?v=20161027"></script>
+<!-- datedropper.min.js -->
+
+</html>

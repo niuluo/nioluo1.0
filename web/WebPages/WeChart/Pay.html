@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body class="bg_color">
+
+<section id="pay">
+    <div ng-controller="PayController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;"><label
+                    style="line-height: 50px;">确定支付</label></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="page__bd">
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 10px;">
+                            <span>应付款总金额：</span>
+                            <span class="pull-right" style="color:#ff6600">￥<span
+                                    ng-bind="currentAccount.Arrears"></span></span>
+                        </div>
+                    </div>
+                    <div class="weui-cells">
+                        <div class="weui-cell__bd" style="padding: 10px;">
+                            <span style="font-weight: bold;">请选择支付方式</span>
+                            <br/>
+                            <span>备注：若您没有工行信用卡，请点击</span>
+                            <a href="http://m.icbc.com.cn/ICBC/%e4%bf%a1%e7%94%a8%e5%8d%a1/%e7%bd%91%e4%b8%8a%e5%8a%9e%e5%8d%a1/index.htm">申请</a>
+                            <br/>
+                            <span>若您的额度不足，请直接联系工行信用卡客服电话95588，谢谢！</span>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd weui-cells_radio" style="padding: 10px;">
+                            <input type="radio" class="weui-check" checked="checked"/>
+                            <span class="weui-icon-checked"></span>
+                            <img src="../../Images/WeChart/gonghang.jpg"
+                                 style="width: 80%;margin-bottom: 20px;margin-right: 15px;" class="pull-right"/>
+                        </div>
+                    </div>
+                    <div class="weui-cells weui-cells_radio">
+                        <label class="weui-cell weui-check__label" for="radio1">
+                            <div class="weui-cell__bd">
+                                <p>全额</p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" class="weui-check" name="radio1" id="radio1" value="1" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio2">
+                            <div class="weui-cell__bd">
+                                <p>分期3期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio2" value="3" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio3">
+                            <div class="weui-cell__bd">
+                                <p>分期6期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio3" value="6" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio4">
+                            <div class="weui-cell__bd">
+                                <p>分期9期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio4" value="9" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio5">
+                            <div class="weui-cell__bd">
+                                <p>分期12期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio5" value="12" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio6">
+                            <div class="weui-cell__bd">
+                                <p>分期18期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio6" value="18" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label" for="radio7">
+                            <div class="weui-cell__bd">
+                                <p>分期24期<span style="color: #949ea7;">（只支持贷记卡）</span></p>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <input type="radio" name="radio1" class="weui-check" id="radio7" value="24" ng-model="InstallmentTimes"/>
+                                <span class="weui-icon-checked"></span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="weui-cells" style="padding: 10px;">
+                        <input ng-click="pay()" type="button" value="确定支付" class="btn btn-success"
+                               style="width: 100%;height: 50px"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/pay.min.js"></script>
+</html>

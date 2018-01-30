@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body class="bg_color">
+
+<section id="refund">
+    <div ng-controller="RefundController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;"><label
+                    style="line-height: 50px;">申请退单</label></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="page__bd">
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 10px;">
+                            <span style="color: #949494">问题类型</span>
+                            <span class="pull-right">申请退单</span>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd">
+                            <textarea ng-model="RefundReason" placeholder="请填写申请退单问题描述,最多100字" style="width: 100%;padding: 10px;height: 300px;outline:none;resize:none;"></textarea>
+                        </div>
+                    </div>
+                    <div class="weui-cells weui-footer_fixed-bottom bg_color" style="padding: 10px;text-align: center">
+                        <input ng-click="refund()" type="button" value="提交申请" class="btn btn-success" style="width: 100%;height: 50px;"/>
+                        <span style="color: #949494;font-size: 12px;margin-top: 10px;">申退订单须知</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/refund.min.js"></script>
+</html>

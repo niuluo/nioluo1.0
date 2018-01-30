@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet"/>
+    <link href="../css/Common/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../css/Custom/Management/style.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+</head>
+<body style="overflow: hidden">
+<div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal_dialog_custom">
+        <div class="cus_spinner">
+            <div class="cus_spinner-container cus_container1">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container2">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container3">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<header class="header">
+    <content></content>
+</header>
+<aside>
+    <section ng-controller='MenuController'>
+        <menu></menu>
+        <info></info>
+    </section>
+</aside>
+<div id="main-content">
+    <div class="wrapper" ng-controller="CheckAccountsController">
+        <div class="bd">
+            <div class="bd_head">
+                <div ng-class="{'plat_menu menu_active': !isAccount, 'plat_menu menu_disabled': isAccount}"
+                     ng-click="fundShow();">
+                    <span>诊所财务统计</span>
+                </div>
+                <div ng-class="{'plat_menu menu_active': isAccount, 'plat_menu menu_disabled': !isAccount}"
+                     ng-click="accountShow();">
+                    <span>对账单</span>
+                </div>
+                <div class="plat_search" ng-show="isAccount">
+                    <span class="fl_rg">
+                        <button class="btn btn-primary" ng-click="downloadExcel(0);" ng-disabled="btnIsDisabled">
+                            下 载
+                        </button>
+                    </span>
+                    <span class="fl_rg">
+                        <button class="btn btn-primary" ng-click="customSearchOfAccount();" ng-disabled="btnIsDisabled">
+                            搜 索
+                        </button>
+                    </span>
+                    <span class="fl_rg">
+                        <input type="text" placeholder="订单号"
+                               class="form-control round-input" readonly="readonly"
+                               ng-model="searchPar_Account.OrderIDs" ng-click="showInputModal();">
+                    </span>
+                    <!--<span class="fl_rg">-->
+                    <!--<select ng-model="searchPar_Account.Type" class="form-control"-->
+                    <!--ng-options="x.Value as x.Text for x in TypeList"></select>-->
+                    <!--</span>-->
+                    <span class="fl_rg">
+                        <input type="text" placeholder="结束时间"
+                               class="form-control round-input" id="endTime"
+                               ng-model="searchPar_Account.EndTimeText">
+                    </span>
+                    <span class="fl_rg">~</span>
+                    <span class="fl_rg">
+                        <input type="text" placeholder="开始时间"
+                               class="form-control round-input" id="startTime"
+                               ng-model="searchPar_Account.StartTimeText">
+                    </span>
+                </div>
+                <div class="plat_search" ng-show="!isAccount">
+                    <!--<span class="fl_rg">-->
+                    <!--<button class="btn btn-primary" ng-click="downloadExcel(1);" ng-disabled="btnIsDisabled">-->
+                    <!--下 载-->
+                    <!--</button>-->
+                    <!--</span>-->
+                    <span class="fl_rg">
+                        <button class="btn btn-primary" ng-click="customSearchOfFund();" ng-disabled="btnIsDisabled">搜 索
+                        </button>
+                    </span>
+                    <span class="fl_rg">
+                        <input type="text" placeholder="结束时间"
+                               class="form-control round-input" id="endTime2"
+                               ng-model="searchPar_Fund.EndTimeText">
+                    </span>
+                    <span class="fl_rg">~</span>
+                    <span class="fl_rg">
+                        <input type="text" placeholder="开始时间"
+                               class="form-control round-input" id="startTime2"
+                               ng-model="searchPar_Fund.StartTimeText">
+                    </span>
+                </div>
+            </div>
+            <div class="bd_body" ng-show="isAccount">
+                <div ng-controller="AccountController">
+                    <div class="tb_head">
+                        <span class="col_3">诊所</span>
+                        <span class="col_3">姓名</span>
+                        <span class="col_3">订单金额</span>
+                        <span class="col_3">交易金额</span>
+                        <span class="col_1" style="width: 25%">订单号</span>
+                        <span class="col_1">支付单号</span>
+                        <span class="col_1">流水号</span>
+                        <span class="col_4">支付日期</span>
+                        <span class="col_4">退费金额</span>
+                        <span class="col_3">订单状态</span>
+                    </div>
+                    <div ng-repeat="item in PayCheckList" class="tb_item">
+                        <span class="col_3" title="{{item.TenantName}}" ng-bind="item.TenantName"></span>
+                        <span class="col_3" title="{{displayName(item.UserName)}}"
+                              ng-bind="displayName(item.UserName)"></span>
+                        <span class="col_3 color_orange">
+                            <span>¥</span>
+                            <span ng-bind="item.Amount"></span>
+                        </span>
+                        <span class="col_3 color_orange">
+                            <span>¥</span>
+                            <span ng-bind="item.PayAmount - item.RefundAmount"></span>
+                        </span>
+                        <span class="col_1" style="width: 25%" ng-bind="item.OrderNo"></span>
+                        <span class="col_1" ng-bind="item.PayNo"></span>
+                        <span class="col_1" ng-bind="item.ThirdNO"></span>
+                        <span class="col_4" ng-bind="item.PayTime"></span>
+                        <span class="col_4" ng-bind="item.RefundAmount"></span>
+                        <span class="col_3" ng-bind="showBillStatus(item.State)"></span>
+                        <!--<span class="col_3">-->
+                        <!--<span ng-bind="item.RefundReason" ng-show="item.State == 5"></span>-->
+                        <!--<a href="javascript:void(0);" ng-click="showRefundReason(item);"-->
+                        <!--ng-show="item.State == 4 || item.State == 5">退 费</a>-->
+                        <!--</span>-->
+                    </div>
+                    <div class="data_element page_footer" style="display: none;">
+                        <div class="page_total">
+                                <span class="pagination">
+                                    <span>总记录数：</span>
+                                    <span>{{totalCount}}</span>
+                                </span>
+                        </div>
+                        <div class="page_total">
+                            <span>页面大小：</span>
+                        <span><select ng-options="item.Value as item.Value for item in pageSizeList"
+                                      ng-model="searchPar.Count" ng-change="changePageSize();"></select></span>
+                        </div>
+                        <div class="page_total">
+                                <span class="pagination">
+                                    <span>第</span>
+                                    <input id="jump_page_1" type="text" ng-model="currentPageNum"
+                                           ng-blur="jumpToPage();"
+                                           style="width: 30%; text-align: center;">
+                                    <span>页</span>
+                                    <span>/共{{totalPages}}页</span>
+                                </span>
+                        </div>
+                        <div class="page_num">
+                            <div class="pagination">
+                            </div>
+                            <ul class="pagination">
+                                <li ng-class="{'disabled': currentFivePages[0] <= 5}">
+                                    <a href="javascript:void(0);" ng-click="prevPages();">&laquo;</a>
+                                </li>
+                                <li ng-repeat="item in currentFivePages" ng-class="{'active': currentPageNum == item}">
+                                    <a href="javascript:void(0);" ng-click="switchToCurrentPage(item);">{{item}}</a>
+                                </li>
+                                <li ng-class="{'disabled': isDisabled()}">
+                                    <a href="javascript:void(0);" ng-click="nextPages();">&raquo;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- 退费理由 Begin -->
+                    <div class="modal fade" id="refundReason" tabindex="-1" role="dialog" aria-hidden="true"
+                         data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content modal_content_custom">
+                                <div class="modal-header modal_head modal_header_height">
+                                    <div data-dismiss="modal" aria-hidden="true"
+                                         style='display:inline-block;float:right;' title="关闭">
+                                        <span class='icon-stack'>
+                                            <i class='icon-check-empty icon-stack-base'></i>
+                                            <i class='icon-remove icon-light'></i>
+                                        </span>
+                                    </div>
+                                    <span class="head_title">订单退款</span>
+                                </div>
+                                <div class="modal-body">
+                                    <!--<div class="pt_item_sp">
+                                        <textarea class="txt_area" style="width: 100%;height: 180px;" title="退费理由"
+                                                  placeholder="字符不超过200"
+                                                  ng-model="confirmItem.RefundReason"></textarea>
+                                    </div>-->
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf txt_rg" style="font-weight: 700">订单信息</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">收银项目：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              style="font-weight: 700;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"
+                                              ng-bind="confirmItem.PayTime"></span>
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">订单时间：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              ng-bind="confirmItem.PayTime"></span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">订单号：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis"
+                                              ng-bind="confirmItem.OrderNo"></span>
+                                        <!--<span class="cus_float_lf bell_item_w_2 txt_rg">交易单号：</span>-->
+                                        <!--<span class="cus_float_lf bell_item_w_4 txt_lf">xxxx</span>-->
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">&nbsp;</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf">&nbsp;</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">付款金额：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              style="font-weight: 700;font-size: 18px;color: #ff6600;">￥<span
+                                                ng-bind="confirmItem.PayAmount"></span></span>
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">订单状态：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              ng-bind="StatusText(confirmItem.State)"></span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf txt_rg" style="font-weight: 700">用户信息</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">用户姓名：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              style="font-weight: 700" ng-bind="confirmItem.UserName"></span>
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">联系电话：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf"
+                                              ng-bind="confirmItem.Mobile"></span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">付款方式：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf">工银e支付</span>
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">付款状态：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf">已支付</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">问题类型：</span>
+                                        <span class="cus_float_lf bell_item_w_4 txt_lf">申退</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf bell_item_w_2 txt_rg">申退原因：</span>
+                                        <span class="cus_float_lf txt_lf" ng-bind="confirmItem.Description"></span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <span class="cus_float_lf txt_rg" style="font-weight: 700">处理该问题订单</span>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h">
+                                        <input class="form-control bell_item_w_4" type="password"
+                                               placeholder="输入管理员账号密码"/>
+                                    </div>
+                                    <div class="pt_item_sp pt_item_h_1 txt_cen">
+                                        <span class="bell_item_w_2">
+                                            <button class="btn cus_btn_color cus_btn_width" ng-click="confirmRefund();">
+                                                确定退款
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 退费理由 End -->
+                </div>
+            </div>
+            <div class="bd_body" ng-show="!isAccount">
+                <div ng-controller="FundController" style="max-height: 600px;overflow-y: auto">
+                    <div class="tb_head">
+                        <span class="col_2">诊所名称</span>
+                        <!--<span class="col_2">总账单数</span>-->
+                        <!--<span class="col_1">问题订单数</span>-->
+                        <span class="col_2">总收入</span>
+                        <span class="col_2">总退款</span>
+                        <span class="col_2">总金额</span>
+                    </div>
+                    <div ng-repeat="item in PayCheckList" class="tb_item">
+                        <span class="col_2">
+                            <span ng-bind="item.TenantName"></span>
+                        </span>
+                        <!--<span class="col_2" ng-bind="item.TotalCount"></span>-->
+                        <!--<span class="col_1" ng-bind="item.FailCount"></span>-->
+                        <span class="col_2 color_orange">
+                            <span>¥</span>
+                            <span ng-bind="item.totalPayAmount"></span>
+                        </span>
+                        <span class="col_2 color_blue">
+                            <span>¥</span>
+                            <span ng-bind="item.totalRefundAmount"></span>
+                        </span>
+                        <span class="col_2 color_orange">
+                            <span>¥</span>
+                            <span ng-bind="item.totalPayAmount - item.totalRefundAmount"></span>
+                        </span>
+                    </div>
+                    <!--<div class="data_element page_footer" style="display: none;">-->
+                    <!--<div class="page_total">-->
+                    <!--<span class="pagination">-->
+                    <!--<span>总记录数：</span>-->
+                    <!--<span>{{totalCount}}</span>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="page_total">-->
+                    <!--<span>页面大小：</span>-->
+                    <!--<span><select ng-options="item.Value as item.Value for item in pageSizeList"-->
+                    <!--ng-model="searchPar.Count" ng-change="changePageSize();"></select></span>-->
+                    <!--</div>-->
+                    <!--<div class="page_total">-->
+                    <!--<span class="pagination">-->
+                    <!--<span>第</span>-->
+                    <!--<input id="jump_page_2" type="text" ng-model="currentPageNum" ng-blur="jumpToPage();"-->
+                    <!--style="width: 30%; text-align: center;">-->
+                    <!--<span>页</span>-->
+                    <!--<span>/共{{totalPages}}页</span>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="page_num">-->
+                    <!--<div class="pagination">-->
+                    <!--</div>-->
+                    <!--<ul class="pagination">-->
+                    <!--<li ng-class="{'disabled': currentFivePages[0] <= 5}"><a href="javascript:void(0);"-->
+                    <!--ng-click="prevPages();">&laquo;</a>-->
+                    <!--</li>-->
+                    <!--<li ng-repeat="item in currentFivePages" ng-class="{'active': currentPageNum == item}">-->
+                    <!--<a href="javascript:void(0);" ng-click="switchToCurrentPage(item);">{{item}}</a>-->
+                    <!--</li>-->
+                    <!--<li ng-class="{'disabled': isDisabled()}"><a href="javascript:void(0);"-->
+                    <!--ng-click="nextPages();">&raquo;</a></li>-->
+                    <!--</ul>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+        <!-- 单号搜索 Begin -->
+        <div class="modal fade" id="noModal" tabindex="-1" role="dialog" aria-hidden="true"
+             data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;'
+                             title="关闭">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">单号</span>
+                    </div>
+                    <div class="modal-body">
+                            <textarea class="txt_area" style="width: 100%;height: 180px;" title="单号" placeholder="以逗号分割"
+                                      ng-model="searchPar_Account.OrderIDs"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 单号搜索 End -->
+    </div>
+</div>
+<footer class="footer footer_pal">
+    <span class="footer_span">Copyright &copy;2016/07/04 www.eruka.com</span>
+</footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+<script src="../js/Custom/Management/common.min.js?v=20161026"></script>
+<script src="../js/Custom/Management/checkAccounts.min.js?v=20161026"></script>
+</html>

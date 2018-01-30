@@ -1,0 +1,5 @@
+D:\source\eHospital\04.开发\源代码\Framwork\eHospitalPayment\PaymentDTO\bin\Release\eHospital.PaymentDTO.dll
+D:\source\eHospital\04.开发\源代码\Framwork\eHospitalPayment\PaymentDTO\bin\Release\eHospital.PaymentDTO.pdb
+D:\source\eHospital\04.开发\源代码\Framwork\eHospitalPayment\PaymentDTO\obj\Release\PaymentDTO.csprojResolveAssemblyReference.cache
+D:\source\eHospital\04.开发\源代码\Framwork\eHospitalPayment\PaymentDTO\obj\Release\eHospital.PaymentDTO.dll
+D:\source\eHospital\04.开发\源代码\Framwork\eHospitalPayment\PaymentDTO\obj\Release\eHospital.PaymentDTO.pdb

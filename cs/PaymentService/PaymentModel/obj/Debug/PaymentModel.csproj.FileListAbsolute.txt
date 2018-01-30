@@ -1,0 +1,4 @@
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\bin\Debug\PaymentModel.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\bin\Debug\PaymentModel.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\obj\Debug\PaymentModel.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\obj\Debug\PaymentModel.pdb

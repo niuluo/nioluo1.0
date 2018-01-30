@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/mobiscroll-2.13.2.full.min.css" rel="stylesheet">
+</head>
+<body>
+<section id="new_appoint">
+    <div ng-controller="NewBookController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;"><label style="line-height: 50px;">新增预约</label></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>患者姓名：</p>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <span>{{currentPatient.Name}}</span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>预约事项：</p>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input ng-hide="isReadonly" id="appoint_item" type="text" placeholder="请选择预约事项" class="weui-input"
+                               ng-model="newAppoint.AppointItemName" ng-click="showItems();">
+                        <span ng-hide="!isReadonly">{{newAppoint.AppointItemName}}</span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>开始时间：</p>
+                    </div>
+                    <div class="weui_cell_bd">
+                        <input ng-hide="isReadonly" id="appoint_begin_date" type="text" class="weui-input" placeholder="预约开始时间" ng-model="newAppoint.BeginTime">
+                        <span ng-hide="!isReadonly">{{newAppoint.BeginTime}}</span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>截止时间：</p>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input ng-hide="isReadonly" id="appoint_end_date" type="text" class="weui-input" placeholder="预约截止时间" ng-model="newAppoint.EndTime">
+                        <span ng-hide="!isReadonly">{{newAppoint.EndTime}}</span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>预约类型：</p>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select ng-hide="isReadonly" class="weui-select" ng-model="newAppoint.AppointType" ng-options="item.Type as item.Name for item in appointTypeList"><option value="">请选择预约类型</option></select>
+                        <span ng-hide="!isReadonly">{{getAppointTypeName(newAppoint.AppointType)}}</span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>预约医生：</p>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select ng-hide="isReadonly" class="weui-select" ng-model="selectedDoctor" ng-options="item as item.UserName for item in doctors"><option value="">请选择医生</option></select>
+                        <span ng-hide="!isReadonly">{{newAppoint.DoctorName}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="weui-btn-area">
+                    <a class="weui-btn weui-btn_primary" href="javascript:void(0);" ng-click="addNewAppoint();" ng-hide="isReadonly">保 存</a>
+                    <a class="weui-btn weui-btn_primary" href="javascript:void(0);" ng-click="addNewOtherAppoint();" ng-hide="!isReadonly">预 约</a>
+                </div>
+            </div>
+        </div>
+        <ul id="appoint_item_list" style="display: none">
+            <li ng-repeat="firstItem in appointItems">
+                <span data-bind="{{firstItem.Category}}">{{firstItem.Category.Name}}</span>
+                <ul class="second_item" ng-repeat="secondItem in firstItem.SubCategories">
+                    <li>
+                        <span data-bind="{{secondItem.SubCategory}}">{{secondItem.SubCategory.Name}}</span>
+                        <ul ng-repeat="thirdItem in secondItem.Items">
+                            <li data-bind="{{thirdItem}}">
+                                {{thirdItem.Name}}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Custom/WeChart/mobiscroll-2.13.2.full.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/newBook.min.js"></script>
+</html>

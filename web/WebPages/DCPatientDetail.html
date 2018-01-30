@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet" />
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+    <link href="../css/Custom/style.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css?03.14" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+    <div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal_dialog_custom">
+            <div class="cus_spinner">
+                <div class="cus_spinner-container cus_container1">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container2">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container3">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aside class="body_hide left_menu">
+        <div ng-controller="MenuController">
+            <menu></menu>
+            <info></info>
+            <login></login>
+            <!--<push></push>-->
+        </div>
+    </aside>
+    <div id="main-content" class="cus_main_height main_width body_hide">
+        <div class="wrapper" ng-controller="PatientDetailController">
+            <div class="col-lg-2" style="padding-left: 0px;padding-right: 0px;height: 100%;">
+                <div class="box-c fright" style="width: 100%;height: 100%;">
+                    <div class="msg" style="height: 10%;">
+                        <h2>患者信息</h2>
+                    </div>
+                    <div style="text-align: center;overflow-y: scroll;overflow-x: hidden;height: 90%;">
+                        <div class="div_row_1">
+                            <div class="menu_icon_user_1">
+                                <span class="icon-user menu_icon_user_cus"></span>
+                            </div>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">姓名：</span>
+                            <span class="second__col_span_1">{{currentPatient.Name}}</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">性别：</span>
+                            <span class="second__col_span_1" ng-bind="convertGender(currentPatient.Gender);"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">年龄：</span>
+                            <span class="second__col_span_1"><b ng-hide="!currentPatient.Age" style="font-weight: normal">{{currentPatient.Age}}岁</b></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">微信绑定：</span>
+                            <span class="second__col_span_1" ng-if="!currentPatient.OpenID">未绑定</span>
+                            <span class="second__col_span_1" ng-if="currentPatient.OpenID">已绑定</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">账户余额：</span>
+                            <span class="second__col_span_1" ng-bind="currentPatient.Amount | currency: '￥'"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">保险号：</span>
+                            <span class="second__col_span_1" ng-bind="currentPatient.InsuranceNo"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">保险种类：</span>
+                            <span class="second__col_span_1"  ng-bind="convertInsuranceType(currentPatient.InsuranceType);"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">社保号：</span>
+                            <span class="second__col_span_1" ng-bind="currentPatient.SocialSecurityNo"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">社保号：</span>
+                            <span class="second__col_span_1" ng-bind="currentPatient.CardNo"></span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">患者类型：</span>
+                            <span class="second__col_span_1">{{currentPatient.PatientLevel.Name}}</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">患者来源：</span>
+                            <span class="second__col_span_1">{{currentPatient.PatientSource.Name}}</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">电话号码：</span>
+                            <span class="second__col_span_1">{{currentPatient.Mobile}}</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">备注：</span>
+                            <span class="second__col_span_1">{{currentPatient.Remark}}</span>
+                        </div>
+                        <div class="div_row_1">
+                            <span class="first_col_span_1">地址：</span>
+                            <span class="second__col_span_1">{{currentPatient.Address}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 cus_div_content_height">
+                <section id="cd-timeline" class="cd-container">
+                    <div class="cd-timeline-block" ng-repeat="item in CombinationDataList | orderBy: '-DateTime'">
+                        <div class="cd-timeline-img cd-picture">
+                            <span class="icon-medkit cd-medical"></span>
+                        </div>
+                        <div class="cd-date cd-cus-date">
+                            {{item.DateTime}}
+                        </div>
+                        <div class="cd-timeline-content linear_1">
+                            <h2 style="color:#7A8B8B;"><span class="icon-list-alt"></span>&nbsp;{{item.AppointTitle}}</h2>
+                            <div class="content_item" ng-repeat="appointItem in item.GroupList.Appoints" ng-click="showDetail(appointItem, 1, $event);">
+                                {{appointItem.AppointDescription}}
+                            </div>
+                        </div>
+                        <div class="cd-timeline-content linear_2">
+                            <h2 style="color:#7A8B8B;"><span class="icon-tasks"></span>&nbsp;{{item.MedicalTitle}}</h2>
+                            <div class="content_item" ng-repeat="medicalItem in item.GroupList.Medicals" ng-click="showDetail(medicalItem, 2, $event);">
+                                {{medicalItem.MedicalDescription}}
+                            </div>
+                        </div>
+                        <div class="cd-timeline-content linear_3">
+                            <h2 style="color:#7A8B8B;"><span class="icon-calendar"></span>&nbsp;{{item.VisitTitle}}</h2>
+                            <div class="content_item" ng-repeat="visitItem in item.GroupList.Visits" ng-click="showDetail(visitItem, 3, $event);">
+                                {{visitItem.VisitDescription}}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-lg-4 detail_div_row">
+                <div class="msg">
+                    <h2 style="display: inline-block">{{currentItem.DataTitle}}</h2>
+                    <span style="display: inline-block;margin-left: 65%;" ng-show="currentItem.DataTitle == '电子病案'">
+                        <a style="font-size: 23px;" href='javascript:void(0);' class='icon-file-text-alt' ng-click='editMedicalRecord(currentItem.MedicalDetail);' title="病案编辑"></a>
+                    </span>
+                </div>
+                <div id="show_detail" style="height: 90%;overflow-y: scroll;">
+                </div>
+            </div>
+            <patient></patient>
+            <tooth></tooth>
+            <template></template>
+        </div>
+    </div>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+<script src="../js/Common/Jquery/jQuery.print.min.js"></script>
+<script src="../js/Common/BootStrap/ui-bootstrap-tpls.min.js"></script>
+<script src="../js/Common/Jquery/CatalogTree.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Custom/common.min.js?v=20161026"></script>
+<script src="../js/Custom/patientDetail.min.js?v=20161026"></script>
+</html>

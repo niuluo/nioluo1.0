@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet"/>
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Custom/style.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css?03.14" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+    <div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal_dialog_custom">
+            <div class="cus_spinner">
+                <div class="cus_spinner-container cus_container1">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container2">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="cus_spinner-container cus_container3">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aside class="body_hide left_menu">
+        <section ng-controller="MenuController">
+            <menu></menu>
+            <info></info>
+            <login></login>
+            <!--<push></push>-->
+        </section>
+    </aside>
+    <div id="main-content" ng-controller="DataStaticController" class="cus_main_height main_width body_hide">
+        <div class="wrapper">
+            <div style="margin-top: 10px;">
+                <div class="cus_icon_unit cus_icon_unit_active" style="margin-left: 20px;">
+                    <a class="icon-home cus_icon cus_icon_active" data-toggle="tab" href="#patientFrom"
+                       ng-click="switchTab(1, $event);" title="患者来源"></a>
+                </div>
+                <div class="line-style"></div>
+                <div class="cus_icon_unit">
+                    <a class="icon-group cus_icon" data-toggle="tab" href="#newPatient"
+                       ng-click="switchTab(2, $event);" title="就诊人数统计" style="display: inline-block;"></a>
+                </div>
+                <div class="line-style"></div>
+                <div class="cus_icon_unit">
+                    <a class="icon-jpy cus_icon" data-toggle="tab" href="#doctorCost"
+                       ng-click="switchTab(3, $event);" title="收费统计" style="margin-left: 15px;"></a>
+                </div>
+                <div class="line-style"></div>
+                <div class="cus_icon_unit">
+                    <a class="icon-calendar cus_icon" data-toggle="tab" href="#appoint_items"
+                       ng-click="switchTab(4, $event);" title="预约统计"></a>
+                </div>
+                <div class="line-style"></div>
+                <div class="cus_icon_unit">
+                    <a class="icon-table cus_icon" data-toggle="tab" href="#report_area"
+                       ng-click="switchTab(5, $event);" title="报表区"></a>
+                </div>
+            </div>
+            <div class="panel-body sub-body" style="height: 90%;">
+                <div class="tab-content pad_per_2 platform_height">
+                    <div id="patientFrom" class="tab-pane active platform_height">
+                        <div style="width:20%;float:left;" class="platform_height">
+                            <div class="row patient-panel boxShadow">
+                                <div class="col-lg-2 subDetail">
+                                    <select ng-change="changePatientFromTimeType()"
+                                            class="form-control width_custom" ng-model="PatientFromTimeType">
+                                        <option value="">全部</option>
+                                        <option value="2">自定义时间</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <input type="text" style="width: 85%; display: inline" placeholder="开始日期"
+                                           class="form-control round-input" id="patientFromStartDate"
+                                           ng-model="searchData.patientFrom.StartDate"
+                                           ng-disabled="PatientFromTimeType != '2'">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <input type="text" style="width: 85%; display: inline" placeholder="结束日期"
+                                           class="form-control round-input" id="patientFromEndDate"
+                                           ng-model="searchData.patientFrom.EndDate"
+                                           ng-disabled="PatientFromTimeType != '2'">
+                                </div>
+
+                                <div class="col-lg-2 subDetail">
+                                    <div class="search-appoints pull-left"
+                                         ng-click="PatientFromTimeType != '2' || searchPatientFrom();"
+                                         ng-disabled="PatientFromTimeType != '2'" title="搜索">
+                                    </div>
+                                    <div class="export-to-excel pull-left"
+                                         ng-click="exportPatientFrom();" title="下载Excel">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="columnChart pull-left" ng-class="{'columnChart_active pull-left': showPatientSourceColumn,
+                                    'columnChart pull-left': !showPatientSourceColumn}"
+                                         ng-click="changePatientFromChartType(1)" title="柱状图">
+                                    </div>
+                                    <div ng-class="{'pieChart_active pull-left': showPatientSourcePie,
+                                    'pieChart pull-left': !showPatientSourcePie}"
+                                         ng-click="changePatientFromChartType(2)" title="饼图">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row chart platform_height">
+                            <div id='canvasDivOfPatientSourceColumn' ng-show="showPatientSourceColumn"></div>
+                            <div id='canvasDivOfPatientSourcePie' ng-show="showPatientSourcePie"></div>
+                        </div>
+                    </div>
+                    <div id="newPatient" class="tab-pane platform_height">
+                        <div style="float:left;width:20%;" class="platform_height">
+                            <div class="row patient-panel boxShadow">
+                                <div class="col-lg-3 subDetail">
+                                    <div class="timeDay pull-left"
+                                         ng-click="setNewPatientDay();" title="日">
+                                    </div>
+                                    <div class="timeWeek pull-left"
+                                         ng-click="setNewPatientWeek();" title="周">
+                                    </div>
+                                    <div class="timeMonth pull-left"
+                                         ng-click="setNewPatientMonth();" title="周">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>从</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="newPatientStartDate"
+                                           ng-model="searchData.newPatient.StartDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>到</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="newPatientEndDate"
+                                           ng-model="searchData.newPatient.EndDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="search-appoints pull-left"
+                                         ng-click="searchNewPatient();" title="搜索">
+                                    </div>
+                                    <div class="export-to-excel pull-left"
+                                         ng-click="exportTreat();" title="下载Excel">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div ng-class="{'columnChart_active pull-left': showNewPatientColumn,
+                                    'columnChart pull-left': !showNewPatientColumn}"
+                                         ng-click="changeNewPatientChartType(1, $event)" title="柱状图">
+                                    </div>
+                                    <div ng-class="{'lineChart_active pull-left': showNewPatientLine,
+                                    'lineChart pull-left': !showNewPatientLine}"
+                                         ng-click="changeNewPatientChartType(2, $event)" title="折线图">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row chart platform_height">
+                            <div id='canvasDivOfNewPatientColumn' ng-show="showNewPatientColumn"></div>
+                            <div id='canvasDivOfNewPatientLine' ng-show="showNewPatientLine"></div>
+                        </div>
+                    </div>
+                    <div id="doctorCost" class="tab-pane platform_height">
+                        <div style="float:left;width:20%;" class="platform_height">
+                            <div class="row patient-panel boxShadow">
+                                <div class="col-lg-3 subDetail">
+                                    <div class="timeDay pull-left"
+                                         ng-click="setDoctorCostDay();" title="日">
+                                    </div>
+                                    <div class="timeWeek pull-left"
+                                         ng-click="setDoctorCostWeek();" title="周">
+                                    </div>
+                                    <div class="timeMonth pull-left"
+                                         ng-click="setDoctorCostMonth();" title="周">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>从</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="doctorCostStartDate"
+                                           ng-model="searchData.costType.StartDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>到</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="doctorCostEndDate"
+                                           ng-model="searchData.costType.EndDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="search-appoints pull-left"
+                                         ng-click="costTypeSearchClick();" title="搜索">
+                                    </div>
+                                    <div class="export-to-excel pull-left"
+                                         ng-click="exportCostType();" title="下载Excel">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="columnChart pull-left" ng-class="{'columnChart_active pull-left': showCostColumn,
+                                    'columnChart pull-left': !showCostColumn}"
+                                         ng-click="switchCostChart(1);" title="柱状图">
+                                    </div>
+                                    <div ng-class="{'pieChart_active pull-left': showCostPie,
+                                    'pieChart pull-left': !showCostPie}"
+                                         ng-click="switchCostChart(2);" title="饼图">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row chart platform_height">
+                            <div id='canvasDivOfDoctorCost' ng-show="showCostColumn"></div>
+                            <div id='canvasDivOfCostPie' ng-show="showCostPie"></div>
+                        </div>
+                    </div>
+                    <div id="appoint_items" class="tab-pane platform_height">
+                        <div style="float:left;width:20%; " class="platform_height">
+                            <div class="row patient-panel boxShadow">
+                                <div class="col-lg-3 subDetail">
+                                    <div class="timeDay pull-left"
+                                         ng-click="setAppointDay();" title="日">
+                                    </div>
+                                    <div class="timeWeek pull-left"
+                                         ng-click="setAppointWeek();" title="周">
+                                    </div>
+                                    <div class="timeMonth pull-left"
+                                         ng-click="setAppointMonth();" title="周">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>从</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="appointStartDate"
+                                           ng-model="searchData.appoint.StartDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <span>到</span>
+                                    <input type="text" style="width: 85%; display: inline" placeholder="日期"
+                                           class="form-control round-input" id="appointEndDate"
+                                           ng-model="searchData.appoint.EndDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="search-appoints pull-left"
+                                         ng-click="appointSearchClick();" title="搜索">
+                                    </div>
+                                    <div class="export-to-excel pull-left"
+                                         ng-click="exportAppoint();" title="下载Excel">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="columnChart pull-left" ng-class="{'columnChart_active pull-left': showAppointLine,
+                                    'columnChart pull-left': !showAppointLine}"
+                                         ng-click="switchAppointChart(1);" title="柱状图">
+                                    </div>
+                                    <div ng-class="{'pieChart_active pull-left': showAppointPie,
+                                    'pieChart pull-left': !showAppointPie}"
+                                         ng-click="switchAppointChart(2);" title="饼图">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row chart platform_height">
+                            <div id='canvasDivOfAppoint' ng-show="showAppointLine"></div>
+                            <div id='canvasDivOfAppointPie' ng-show="showAppointPie"></div>
+                        </div>
+                    </div>
+                    <div id="report_area" class="tab-pane platform_height">
+                        <div style="float:left;width:20%;" class="platform_height">
+                            <div class="row patient-panel boxShadow">
+                                <div class="col-lg-2 subDetail">
+                                    <select class="form-control" ng-options="item.Type as item.Value for item in reportTypes"
+                                            ng-model="searchData.report.DateType" ng-change="switchDateType();">
+                                        <option value="">请选报表类型</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 subDetail" ng-show="searchData.report.DateType != 4 && searchData.report.DateType != 3">
+                                    <input type="text" placeholder="日期"
+                                           class="form-control round-input" id="reportStartDate"
+                                           ng-model="searchData.report.DateTime">
+                                </div>
+                                <div class="col-lg-2 subDetail" ng-show="searchData.report.DateType == 3">
+                                    <input type="text" placeholder="日期"
+                                           class="form-control round-input" id="daily_date"
+                                           ng-model="searchData.report.DateTime">
+                                </div>
+                                <div class="col-lg-2 subDetail" ng-show="searchData.report.DateType == 4">
+                                    <span>从</span>
+                                    <input type="text" placeholder="日期"
+                                           class="form-control round-input" id="reportBeginDate"
+                                           ng-model="searchData.report.BeginDate">
+                                </div>
+                                <div class="col-lg-2 subDetail" ng-show="searchData.report.DateType == 4">
+                                    <span>到</span>
+                                    <input type="text" placeholder="日期"
+                                           class="form-control round-input" id="reportEndDate"
+                                           ng-model="searchData.report.EndDate">
+                                </div>
+                                <div class="col-lg-2 subDetail">
+                                    <div class="search-appoints pull-left"
+                                         ng-click="reportDataSearch();" title="搜索">
+                                    </div>
+                                    <div class="export-to-excel pull-left"
+                                         ng-click="reportExport();" title="下载Excel">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row chart platform_height">
+                            <div ng-show="showDailyReport" class="report_div cus_table1">
+                                <table class="table table-striped" style="height: 100%;display: block;">
+                                    <caption style="height: 5%;display: inherit;">{{reportTitle}}</caption>
+                                    <thead style="height: 6%;">
+                                    <tr style="background-color: #9999CC;">
+                                        <th style="width: 20%;color: white;">收款人</th>
+                                        <th style="width: 20%;color: white;">应收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">实收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">预付款实收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">预付款充值金额（￥）</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="height: 88%;">
+                                    <tr ng-repeat="item in reportData.PayeeDailyReport">
+                                        <td style="width: 20%;"><span ng-bind="item.PayeeName"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="item.TreatDueCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="item.TreatRealCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="item.AdvanceTreatCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="item.AdvanceReCharge | currency: '￥'"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 20%;"><span>总 额</span></td>
+                                        <td style="width: 20%;"><span ng-bind="reportData.TreatDueCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="reportData.TreatRealCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="reportData.AdvanceTreatCharge | currency: '￥'"></span></td>
+                                        <td style="width: 20%;"><span ng-bind="reportData.AdvanceReCharge | currency: '￥'"></span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-show="showMonthReport" class="report_div cus_table1">
+                                <table class="table table-striped" style="height: 100%;display: block;">
+                                    <caption style="height: 5%;display: inherit;">{{reportTitle}}</caption>
+                                    <thead style="height: 6%;">
+                                    <tr style="background-color: #9999CC;">
+                                        <th style="width: 20%;color: white;">日 期</th>
+                                        <th style="width: 20%;color: white;">应收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">实收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">预付款实收金额（￥）</th>
+                                        <th style="width: 20%;color: white;">预付款充值金额（￥）</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="height: 88%;">
+                                        <tr ng-repeat="item in reportData.MonthlyReports">
+                                            <td style="width: 20%;"><span ng-bind="item.DateTime"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.TreatDueCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.TreatRealCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.AdvanceTreatCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.AdvanceReCharge | currency: '￥'"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 20%;"><span>总 额</span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalTreatDueCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalTreatRealCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalAdvanceTreatCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalAdvanceReCharge | currency: '￥'"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-show="showYearReport" class="report_div cus_table1">
+                                <table class="table table-striped" style="height: 100%;display: block;">
+                                    <caption style="height: 5%;display: inherit;">{{reportTitle}}</caption>
+                                    <thead style="height: 6%;">
+                                        <tr style="background-color: #9999CC;">
+                                            <th style="width: 20%;color: white;">月 份</th>
+                                            <th style="width: 20%;color: white;">应收金额（￥）</th>
+                                            <th style="width: 20%;color: white;">实收金额（￥）</th>
+                                            <th style="width: 20%;color: white;">预付款实收金额（￥）</th>
+                                            <th style="width: 20%;color: white;">预付款充值金额（￥）</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="height: 88%;">
+                                        <tr ng-repeat="item in reportData.AnnualReports">
+                                            <td style="width: 20%;"><span ng-bind="item.DateTime"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.TreatDueCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.TreatRealCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.AdvanceTreatCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="item.AdvanceReCharge | currency: '￥'"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 20%;"><span>总 额</span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalTreatDueCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalTreatRealCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalAdvanceTreatCharge | currency: '￥'"></span></td>
+                                            <td style="width: 20%;"><span ng-bind="reportData.TotalAdvanceReCharge | currency: '￥'"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-show="showDoctorReport" class="report_div cus_table1">
+                                <table class="table table-striped" style="height: 100%;display: block;">
+                                    <caption style="height: 5%;display: inherit;">{{reportTitle}}</caption>
+                                    <thead style="height: 6%;">
+                                        <tr style="background-color: #9999CC;">
+                                            <th style="width: 10%;color: white;">医 生</th>
+                                            <th style="width: 15%;color: white;">总收入</th>
+                                            <th style="width: 180px; white-space: nowrap;color: white;" ng-repeat="item in reportData.CategoryCosts"><span ng-bind="item.CategoryName"></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="height: 88%;">
+                                        <tr ng-repeat="item in reportData.DoctorCosts">
+                                            <td style="width: 10%;white-space:nowrap;"><span ng-bind="item.DoctorName"></span></td>
+                                            <td style="width: 15%;white-space: nowrap;"><span ng-bind="item.Price | currency: '￥'"></span></td>
+                                            <td style="width: 180px;white-space: nowrap;" ng-repeat="costItem in item.CategoryCosts"><span ng-bind="costItem.Price | currency: '￥'"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 10%;white-space:nowrap;">总 额</span></td>
+                                            <td style="width: 15%;white-space:nowrap;"><span ng-bind="reportData.Price | currency: '￥'"></span></td>
+                                            <td style="width: 180px;white-space: nowrap;" ng-repeat="costItem in reportData.CategoryCosts"><span ng-bind="costItem.Price | currency: '￥'"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer body_hide">
+        <span class="footer_span">Copyright &copy;2017 niuluo-tech.cn</span>
+    </footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/ichart/ichart-1.2.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Custom/common.min.js"></script>
+<script src="../js/Custom/dataStatisticMG.min.js"></script>
+</html>

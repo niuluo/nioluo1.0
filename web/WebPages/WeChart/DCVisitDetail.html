@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body>
+<section id="visit_detail">
+    <div ng-controller="VisitDetailController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;">
+                <label style="line-height: 50px;">回访详情</label>
+            </div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">回访信息</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">回访事项：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentVisit.VisitItemName}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">回访人员：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentVisit.VisitorName}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">回访时间：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentVisit.VisitTime}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">回访内容：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentVisit.VisitContent}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">信息反馈</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">反馈内容：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <textarea placeholder="反馈内容" ng-model="feedback" style="resize: none;" class="form-control" ng-readonly="!isShow"></textarea>
+                    </div>
+                </div>
+                <div class="weui-btn-area" ng-show="isShow">
+                    <a class="weui-btn weui-btn_primary" href="javascript:void(0);" ng-click="saveFeedback();">保 存</a>
+                </div>
+            </div>
+            <div id="toast" style="display: none;">
+                <div class="weui-mask_transparent"></div>
+                <div class="weui-toast">
+                    <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                    <p class="weui-toast__content">已完成</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/visitDetail.min.js"></script>
+</html>

@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8;"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet" />
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/fullcalendar.min.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../css/Custom/style.css?03.20" rel="stylesheet">
+    <link href="../css/Common/datedropper.css" rel="stylesheet">
+</head>
+<body class="cus_main_height">
+<div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal_dialog_custom">
+        <div class="cus_spinner">
+            <div class="cus_spinner-container cus_container1">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container2">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container3">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<aside class="body_hide left_menu">
+    <section ng-controller="MenuController">
+        <menu></menu>
+        <info></info>
+        <login></login>
+        <!--<push></push>-->
+    </section>
+</aside>
+<div id="main-content" ng-controller="BookController" class="cus_main_height main_width body_hide">
+    <div class="wrapper">
+        <div class="box-b fleft">
+            <div class="doctor_list box-b-top" ng-mouseover="doctorListHandle();">
+                <div style="display: inline-block;" id="doctor_list_area">
+                    <button class="cus_span_icon fc-next-button ui-button ui-state-default ui-corner-left"
+                            ng-click="leftShift(currentIndex, $event);" style="padding: 1%;">
+                        <span class="ui-icon ui-icon-circle-triangle-w" style="display: block; margin: auto;"></span>
+                    </button>
+                    <div id="doctor_list_out" style="display: inline-block;overflow-x: hidden;vertical-align: middle;">
+                        <div id="doctor_list">
+                            <span ng-class="{'cus_doctor cus_doctor_selected': $index == currentIndex, 'cus_doctor': $index != currentIndex}"
+                                  ng-repeat="doctor in appointmentList.DoctorList"
+                                  ng-click="showAppoint(doctor, $index, $event);" ng-bind="doctor.UserName"></span>
+                        </div>
+                    </div>
+                    <button class="cus_span_icon fc-next-button ui-button ui-state-default ui-corner-right" style="padding: 1%;"
+                            ng-click="rightShift(currentIndex, $event);">
+                        <span class="ui-icon ui-icon-circle-triangle-e" style="display: block; margin: auto;"></span>
+                    </button>
+                </div>
+                <div class="col-lg-1 show-add fright" ng-click="addAppoint();" style="margin-top: -5px;margin-left:12px;position: absolute" title="新增预约"></div>
+            </div>
+            <div ui-calendar="uiConfig.calendar" id="book-calendar" class="span8 calendar" ng-model="eventSources"
+                 calendar="myCalendar3"></div>
+        </div>
+        <!--预约信息 Begin-->
+        <div class="box-c fright temp" id="book-mg">
+            <div class="patient-info-detail">
+                <div class="p_item row_space">
+                    <span class="p_item_col_1">姓名：</span>
+                    <span class="p_item_col_2">{{currentAppoint.Patient.PatientName}}</span>
+                </div>
+                <div class="p_item row_space">
+                    <span class="p_item_col_1">性别：</span>
+                    <span class="p_item_col_2">{{currentAppoint.Patient.GenderName}}</span>
+                </div>
+                <div class="p_item row_space">
+                    <span class="p_item_col_1">年龄：</span>
+                    <span class="p_item_col_2" ng-hide="!currentAppoint.Patient.Age">{{currentAppoint.Patient.Age}}岁</span>
+                </div>
+                <div class="p_item row_space">
+                    <span class="p_item_col_1">就诊类型：</span>
+                    <span class="p_item_col_2">{{currentAppoint.Patient.AppointTypeName}}</span>
+                </div>
+                <div class="p_item row_space">
+                    <span class="p_item_col_1">状态：</span>
+                    <span class="p_item_col_2"><span class="cus_appoint_status" id="book_status">{{currentAppoint.Appoint.AppointStatusName}}</span></span>
+                </div>
+                <div class="p_item row_space">
+                <div class="div_show">
+                    <span class="p_item_col_1">电话号码：</span>
+                    <span class="p_item_col_2">{{currentAppoint.Patient.Mobile}}</span>
+                    <a ng-hide="currentAppoint == null || currentAppoint.Appoint.AppointStatus == 4" href="javascript:" ng-click="edit($event);">
+                        <img alt=""
+                             src="../Images/Common/edit.png"
+                             class="icon_edit">
+                    </a>
+                </div>
+                <div class="div_edit">
+                    <span class="p_item_col_1">电话号码：</span>
+                    <input type="text" class="form-control width_custom" name="mobile" id="mobile"
+                           placeholder="请输入电话号码"
+                           ng-model="currentAppoint.Patient.Mobile">
+                </div>
+                 </div>
+                <div class="p_item row_space">
+                    <div class="div_show">
+                        <span class="p_item_col_1">预约事项：</span>
+                        <span class="item_span p_item_col_2 ">{{currentAppoint.Appoint.AppointItem}}</span>
+                        <a ng-hide="currentAppoint == null || currentAppoint.Appoint.AppointStatus == 4" href="javascript:" ng-click="edit($event);">
+                            <img alt=""
+                                 src="../Images/Common/edit.png"
+                                 class="icon_edit">
+                        </a>
+                    </div>
+                    <div class="div_edit">
+                        <span class="p_item_col_1">预约事项：</span>
+                        <div class="list" style="display: inline-block;width: 70%;">
+                            <input type="text" placeholder="请选择预约事项" class="autoSelect form-control p_item_col_2"
+                                   name="appointmentItemsList2"
+                                   id="appointmentItemsList2"
+                                   ng-focus="focusShow($event,'dataDepartment2');" ng-blur="blurHide('appointmentItemsList2','dataDepartment2')"
+                                   ng-model="consultantHospitalDepartmentName">
+                            <ul style="display:none;" id="dataDepartment2">
+                                <li class="first" ng-repeat="Category in appointmentItems">
+                                    <a href="#" class="inactive"
+                                       ng-click="inactiveClick($event);"
+                                       ng-bind="Category.Category.Name"></a>
+                                    <ul style="display: none">
+                                        <li class="second"
+                                            ng-repeat="SubCategories in Category.SubCategories">
+                                            <a href="#"
+                                               ng-click="inactiveClick($event);"
+                                               ng-bind="SubCategories.SubCategory.Name"></a>
+                                            <ul style="display: none">
+                                                <li class="three"
+                                                    ng-repeat="item in SubCategories.Items">
+                                                    <a href="#"
+                                                       ng-click="selectAppointItem(item);"
+                                                       ng-bind="item.Name"></a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="p_item row_space">
+                    <div class="div_show">
+                        <span class="p_item_col_1">医生：</span>
+                        <span class="p_item_col_2">{{currentAppoint.Appoint.AppointDoctor.UserName}}</span>
+                        <a ng-hide="currentAppoint == null || currentAppoint.Appoint.AppointStatus == 4" href="javascript:" ng-click="edit($event);">
+                            <img alt=""
+                                 src="../Images/Common/edit.png"
+                                 class="icon_edit">
+                        </a>
+                    </div>
+                    <div class="div_edit">
+                        <span class="p_item_col_1">医生：</span>
+                        <select class="form-control width_custom" name="patientType"
+                                ng-model="currentAppoint.Appoint.AppointDoctor"
+                                ng-options="x as x.UserName for x in appointmentList.DoctorList"></select>
+                    </div>
+                </div>
+                <div class="p_item">
+                    <div class="div_show">
+                        <span class="p_item_col_1">预约时间：</span>
+                        <span class="p_item_col_2">{{currentAppoint.Appoint.AppointDate}}</span>
+                        <a ng-hide="currentAppoint == null || (currentAppoint.Appoint.AppointStatus > 2 && currentAppoint.Appoint.AppointStatus < 5)" href="javascript:" ng-click="edit($event);">
+                            <img alt=""
+                                 src="../Images/Common/edit.png"
+                                 class="icon_edit">
+                        </a>
+                    </div>
+                    <div class="div_edit" style="height: 60px;">
+                        <span class="p_item_col_1">开始时间：</span>
+                        <input id="workdayBegin" type="text" class="p_item_col_2" name="workTime2"
+                               placeholder="开始时间" ng-model="currentAppoint.Appoint.AppointDate">
+                        <div>
+                            <span class="p_item_col_1">结束时间：</span>
+                            <input id="workdayEnd" type="text" class="p_item_col_2" name="workTime3"
+                                   placeholder="结束时间" ng-model="currentPatient.Appoint.EndTime">
+                        </div>
+                    </div>
+                </div>
+                <div class="lf_end">
+                    <div>
+                        <div class="plat_wid">
+                        <span ng-class="{'save-appoint-disabled plat_wid':currentAppoint==null || currentAppoint.Appoint.AppointStatus == 4,
+                        'save-appoint plat_wid':currentAppoint!=null || currentAppoint.Appoint.AppointStatus != 4}"
+                              ng-click="saveInfo();" title="保存">
+                        </span>
+                        </div>
+                        <div class="plat_wid">
+                        <span ng-class="{'delete-appoint-disabled plat_wid':(currentAppoint == null || (currentAppoint.Appoint.AppointStatus != 1 && currentAppoint.Appoint.AppointStatus != 5))
+                                                     ,'delete-appoint plat_wid':(currentAppoint != null && (currentAppoint.Appoint.AppointStatus == 1 || currentAppoint.Appoint.AppointStatus == 5))}"
+                              ng-click="deleteAppoint();" title="取消预约">
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增预约 Begin -->
+        <div class="modal fade" id="new_appoint" tabindex="-1" role="dialog" aria-hidden="true"
+             data-backdrop="static">
+            <div class="modal-dialog modal_appoint_h modal_appoint_w">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <div data-dismiss="modal" aria-hidden="true" style='display:inline-block;float:right;' title="关闭" ng-click="closeAppoint();">
+                            <span class='icon-stack'>
+                                <i class='icon-check-empty icon-stack-base'></i>
+                                <i class='icon-remove icon-light'></i>
+                            </span>
+                        </div>
+                        <span class="head_title">新增预约</span>
+                    </div>
+                    <div class="modal-body modal_appoint_body_h">
+                        <div class="appoint_top">
+                            <div class="appoint_pic">
+                                <img src="../Images/male.png" ng-show="newAppoint.Gender != 2" alt="暂无图片" style="height: 85%;margin: 15% 0 0 0;">
+                                <img src="../Images/female.png" ng-show="newAppoint.Gender == 2" alt="暂无图片" style="height: 85%;margin: 15% 0 0 0;">
+                            </div>
+                            <div class="appoint_rg">
+                                <div class="div_height">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>姓名：</span>
+                                        <span class="post_item app_item_con cus_float_rg">
+                                        <input ng-show="canSelectPatient" type="text" id="app_p_name" name="name" class="form-control input-sm"
+                                               ng-model="newAppoint.PatientName" ng-blur="changePatient();"/>
+                                        <span ng-show="!canSelectPatient" ng-bind="newAppoint.PatientName"></span>
+                                        </span>
+                                    </div>
+
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>性别：</span>
+                                        <span class="post_item  app_item_con cus_float_rg">
+                                        <select ng-show="!disablePatientEdit" class="form-control input-sm" style="width: 40%;"
+                                                ng-model="newAppoint.Gender"
+                                                ng-options="x.Value as x.Text for x in genderList">
+                                        </select>
+                                        <span ng-show="disablePatientEdit && newAppoint.Gender == 1">男</span>
+                                        <span ng-show="disablePatientEdit && newAppoint.Gender != 1">女</span>
+                                        </span>
+                                    </div>
+                                    <div class="div_height half_rg">
+                                        <span class="post_item app_item_sec cus_float_lf">患者来源：</span>
+                                        <span class="post_item app_item_con cus_float_rg">
+                                        <select class="form-control input-sm" ng-disabled="disablePatientEdit"
+                                                ng-model="newAppoint.PatientSourceID"
+                                                ng-options="x.PatientSourceID as x.Name for x in patientSourceList">
+                                                <option value="">请选择患者来源</option>
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf" ng-show="!disablePatientEdit">出生日期：</span>
+                                        <span class="post_item app_item_fr cus_float_lf" ng-show="disablePatientEdit">年龄：</span>
+                                        <span class="post_item app_item_con cus_float_rg" ng-show="!disablePatientEdit">
+                                        <input type="text" class="form-control input-sm" id="birthday" ng-model="newAppoint.Birthday" ng-show="!disablePatientEdit"/>
+                                        </span>
+                                        <span class="post_item app_item_con cus_float_rg" ng-show="disablePatientEdit" ng-bind="newAppoint.Age"></span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf"><span class="color_red">*</span>电话：</span>
+                                        <span class="post_item app_item_con cus_float_rg">
+                                        <input ng-show="!disablePatientEdit" type="text" name="mobile" class="form-control input-sm"
+                                               ng-model="newAppoint.Mobile"/>
+                                        <span ng-show="disablePatientEdit" ng-bind="newAppoint.Mobile"></span>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="post_item app_item_sec" ng-show="isRelation">关联关系：</span>
+                                        <span class="post_item" ng-show="isRelation">
+                                        <select class="form-control input-sm"
+                                                ng-model="newAppoint.Relation"
+                                                ng-options="x.Type as x.Name for x in relationList">
+                                        </select>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="div_height app_space">
+                                    <div class="div_height half_lf">
+                                        <span class="post_item app_item_fr cus_float_lf">备注：</span>
+                                        <span class="post_item app_item_con cus_float_rg">
+                                        <input ng-show="!disablePatientEdit" class="form-control input-sm" type="text"
+                                               ng-model="newAppoint.Remark"/>
+                                        <span ng-show="disablePatientEdit" ng-bind="newAppoint.Remark"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="appoint_middle">
+                            <div class="div_height app_space">
+                                <span class="post_item app_item_w">
+                                    <select class="form-control input-sm"
+                                            ng-model="newAppoint.AppointType"
+                                            ng-options="x.Value as x.Text for x in appointTypeList">
+                                    </select>
+                                </span>
+                                <span class="post_item app_item_w">
+                                    <select class="form-control input-sm" id="select_doctor"
+                                            ng-model="newAppoint.DoctorID"
+                                            ng-options="x.UserID as x.UserName for x in doctorList">
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="div_height app_con_w app_space">
+                                <div class="list" style="display:inline-block;width: 100%;">
+                                    <input type="text" placeholder="请选择预约事项" class="autoSelect form-control input-sm"
+                                           name="consultantDepartmentName"
+                                           id="consultantDepartmentName"
+                                           ng-focus="focusShow($event,'dataDepartment');" ng-blur="blurHide('consultantDepartmentName','dataDepartment')"
+                                           ng-model="consultantHospitalDepartmentName">
+                                    <ul style="display:none;" id="dataDepartment">
+                                        <li class="first" ng-repeat="Category in appointmentItems">
+                                            <a href="#" class="inactive"
+                                               ng-click="inactiveClick($event);"
+                                               ng-bind="Category.Category.Name"></a>
+                                            <ul style="display: none">
+                                                <li class="second"
+                                                    ng-repeat="SubCategories in Category.SubCategories">
+                                                    <a href="#"
+                                                       ng-click="inactiveClick($event);"
+                                                       ng-bind="SubCategories.SubCategory.Name"></a>
+                                                    <ul style="display: none">
+                                                        <li class="three"
+                                                            ng-repeat="item in SubCategories.Items">
+                                                            <a href="#"
+                                                               ng-click="selectDepartmentClick(item, Category.Category, SubCategories.SubCategory);"
+                                                               ng-bind="item.Name"></a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="app_cal_h">
+                                <input type="text" id="hideDate" ng-show="false"/>
+                                <div ui-calendar="newUiConfig.calendar" class="span8 calendar"
+                                     ng-model="appointSources" calendar="new_calender" id="appoint_time_view"></div>
+                            </div>
+                        </div>
+                        <div class="appoint_end">
+                            <span class="post_item btn_w"><button class="btn btn-sm cus_btn_color cus_btn_width" ng-click="saveAppoint();">保 存</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增预约 End -->
+    </div>
+</div>
+<footer class="footer body_hide">
+    <span class="footer_span">Copyright &copy;2017 niuluo-tech.cn</span>
+</footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/Jquery/jquery-ui.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Common/BootStrap/ui-bootstrap-tpls.min.js"></script>
+<script src="../js/Common/Jquery/moment.min.js"></script>
+<script src="../js/Common/Jquery/fullcalendar-3.1.0.min.js"></script>
+<script src="../js/Common/GoEasy/goeasy.min.js"></script>
+<script src="../js/Common/Jquery/gcal.min.js"></script>
+<script src="../js/Common/Angular/calendar.js"></script>
+<script src="../js/Custom/common.min.js?v=20161027"></script>
+<script src="../js/Custom/bookMG.min.js?v=20161027"></script>
+<script src="../js/Custom/datedropper.min.js?v=20161027"></script>
+</html>

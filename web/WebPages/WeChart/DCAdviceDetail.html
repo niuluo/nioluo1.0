@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body>
+<section id="advice_detail">
+    <div ng-controller="AdviceDetailController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;">
+                <label style="line-height: 50px;">医嘱详情</label>
+            </div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">医嘱类型：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <span ng-bind="adviceDetail.AppointItem"></span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">医嘱说明：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <span ng-bind="adviceDetail.Advice"></span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">诊疗时间：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <span ng-bind="adviceDetail.TreatTime"></span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-cell__hd">如有其它不适，请来院咨询！</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/adviceDetail.min.js"></script>
+</html>

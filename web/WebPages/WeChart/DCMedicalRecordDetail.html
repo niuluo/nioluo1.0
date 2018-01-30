@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body>
+<section id="medical_record_detail">
+    <div ng-controller="MedicalDetailController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;">
+                <label style="line-height: 50px;">病例详情</label>
+            </div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">就诊信息</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">预约事项：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Appoint.AppointItemName}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">预约时间：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{convertAppointTime(currentMedicalDetail.Appoint.BeginTime) | date: "yyyy-MM-dd hh:mma"}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">病例内容</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">主诉：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Treat.ChiefComplaints}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">现病史：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Treat.PresentIllness}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">既往史：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Treat.PastHistory}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">过敏史：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Treat.AllergyHistory}}
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">检查事项：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <div ng-repeat="item in currentMedicalDetail.TreatDetailList | filter:{DetailType: 1}">
+                            <span>{{$index+1}}.</span>
+                            <span>牙齿：{{getToothInfo(item)}}；</span>
+                            <span style="display: block;">检查信息：{{item.DetailContent}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">辅助检查：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <div ng-repeat="item in currentMedicalDetail.TreatDetailList | filter:{DetailType: 2}">
+                            <span>{{$index+1}}.</span>
+                            <span>牙齿：{{getToothInfo(item)}};</span>
+                            <span style="display: block;">辅助检查信息：{{item.DetailContent}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">诊断：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <div ng-repeat="item in currentMedicalDetail.TreatDetailList | filter:{DetailType: 3}">
+                            <span>{{$index+1}}.</span>
+                            <span>牙齿：{{getToothInfo(item)}};</span>
+                            <span style="display: block;">诊断信息：{{item.DetailContent}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">治疗：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <div ng-repeat="item in currentMedicalDetail.TreatDetailList  | filter:{DetailType: 4}">
+                            <span>{{$index+1}}.</span>
+                            <span>牙齿：{{getToothInfo(item)}};</span>
+                            <span style="display: block;">治疗信息：{{item.DetailContent}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">附件资料</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">资料总数：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.TreatFileList.length}}个
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">视频文件：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{getFileCount(2)}}个
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">图片文件：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{getFileCount(1)}}个
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">文本文件：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{getFileCount(3)}}个
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd msg_title">
+                        <label for class="weui-label">医嘱信息</label>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <span class="weui-label">医嘱内容：</span>
+                    </div>
+                    <div class="weui-cell__hd">
+                        {{currentMedicalDetail.Treat.Advice}}
+                    </div>
+                </div>
+        </div>
+    </div>
+</section>
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/medicalRecordDetail.min.js"></script>
+</html>

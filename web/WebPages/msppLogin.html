@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+	<meta charset="UTF-8">
+	<title>扭罗供应平台登陆</title>
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    body,html {
+      background-color: #aed1ec;
+    }
+    div.options {
+      text-align: center;
+      padding: 20% 20px 0;
+    }
+   /* div.options option {
+      width: 200px;
+    }*/
+     div.options select {
+      height: 30px;
+      width: 100%;
+      outline: none;
+      border:none;
+     }
+    div.options input {
+      margin-top: 20px ; 
+      height: 30px;
+      border:none;
+      outline: none;
+      text-align: center;
+      display: block;
+      width: 100%;
+    }
+    div.options .niuluo-submit {
+      background-color: #94c5ec;
+      
+    }
+  </style>
+
+</head>
+<body>
+                 <div>
+                   <div class="options">
+                      <select name="" id="">
+                          <option >诊所主账户</option>
+                          <option >普通账户</option>
+                      </select>
+                      <input class="username" type="text" placeholder="请输入手机号">
+                      <input class="password" type="Password" placeholder="你的密码"> 
+                      <input class="niuluo-submit" type="submit" value="登   录" class="submit-btn" >
+                   </div>
+                 </div>
+<script src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js'></script>
+     <script>
+     // http://niuluo-tech.cn:81/api/User/Login
+         $(document).ready(function(){
+          
+           $(".niuluo-submit").click(function(){
+            var username=$('.username').val();
+            var password=$('.password').val();
+            // console.log(username);
+             $.post("http://niuluo-tech.cn:81/api/User/Login",
+                         JSON.stringify({
+                   "Header": {
+                     "Token": "",
+                     "StatusCode": 0,
+                     "Module": 0,
+                     "Message": "",
+                     "OperateCode": 0,
+                     "TimeStamp": 1483596680509
+                   },
+                   "Body": {
+                     "UserName": username,
+                     "Password": password,
+                     "AccountType": 3,
+                     "UserType": 1
+                   }
+             }),
+             function(data,status){
+              // console.log(data, status);
+              // console.log(data.Body.ThirdToken);
+              window.location.href='http://mall.niuluo-tech.cn?token='+data.Body.ThirdToken;
+             }, 'json');
+           });
+         });
+
+
+ //         {
+ //   "Header": {
+ //     "Token": "",
+ //     "StatusCode": 0,
+ //     "Module": 0,
+ //     "Message": "",
+ //     "OperateCode": 0,
+ //     "TimeStamp": 1483596680509
+ //   },
+ //   "Body": {
+ //     "UserName": "15001930031",
+ //         "City": "北京",
+ //       "District": "西城区"
+ //     },
+ //     "Role": null,
+ //     "Auths": null,
+ //     "ThirdToken": "99EABA81BB55317648C786A6CF57DF95"
+ //   }
+ // }
+     </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>纽罗口腔</title>
+    <link href="../../css/Common/weui.min.css" rel="stylesheet">
+    <link href="../../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/Custom/WeChart/style.css" rel="stylesheet">
+</head>
+<body class="bg_color">
+
+<section id="wait_pay">
+    <div ng-controller="WaitPayController">
+        <div class="weui-flex" style="background-color: darkolivegreen;">
+            <div class="weui-flex__item" style="color: white;height: 50px;text-align: center;"><label
+                    style="line-height: 50px;">支付</label></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="page__bd">
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                            <div style="height: 40px;">
+                                <p style="font-weight: bold;">个人信息</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                            <div>
+                                <p style="display: inline-block">姓名</p>
+                                <span class="pull-right" ng-bind="currentPatient.Name"></span>
+                            </div>
+                            <div>
+                                <p style="display: inline-block">联系方式</p>
+                                <span class="pull-right" ng-bind="currentPatient.Mobile"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                            <div>
+                                <p style="display: inline-block">支付方式</p>
+                                <span class="pull-right">在线支付</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                            <div style="height: 40px;">
+                                <p style="font-weight: bold;">账单号：<span ng-bind="currentAccount.BillNoStr"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells mg_3">
+                        <div class="weui-cell__bd" style="padding: 0px 10px 0 10px;">
+                            <div ng-repeat="detail in currentAccount.CostList">
+                                <p style="display: inline-block" ng-bind="showName(detail)"></p>
+                                <span class="pull-right" style="color:#ff6600">￥<span
+                                        ng-bind="detail.DiscountPrice"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells weui-footer_fixed-bottom" style="padding: 10px;">
+                        <span>应付款金额：</span>
+                        <span style="color:#ff6600">￥<span ng-bind="currentAccount.Arrears"></span></span>
+                        <input type="button" value="立即支付" class="pull-right btn btn-success" ng-click="goToPay()"
+                               style="height: 50px"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<script src="../../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../../js/Custom/WeChart/resource.min.js"></script>
+<script src="../../js/Custom/WeChart/waitPay.min.js"></script>
+</html>

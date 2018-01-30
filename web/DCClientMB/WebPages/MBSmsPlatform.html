@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet" />
+    <link href="../css/Common/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../css/Custom/Management/style.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+</head>
+<body>
+    <div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal_dialog_custom">
+        <div class="cus_spinner">
+            <div class="cus_spinner-container cus_container1">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container2">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container3">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+    <header class="header">
+        <content></content>
+    </header>
+    <aside>
+        <section ng-controller='MenuController'>
+            <menu></menu>
+            <info></info>
+        </section>
+    </aside>
+    <section id="main-content">
+        <section class="wrapper" ng-controller="SMSController">
+            <div class="bd">
+                <div class="bd_head">
+                <span class="span_dis fl_lf mr_sp">
+                    <select class="form-control" name="state"
+                            ng-options="item.Type as item.Name for item in smsStates" ng-model="searchRequest.StatusCode">
+                    </select>
+                </span>
+                    <span class="span_dis fl_lf mr_sp">
+                    <input class="form-control" type="text" placeholder="短信内容" name="condition" ng-model="searchRequest.Condition">
+                </span>
+                    <span class="span_dis fl_lf mr_sp">
+                    <input id="start_date" class="form-control" data-placement="bottom"
+                           title="请填入正确的日期" type="text" placeholder="起始日期" name="startDate" data-toggle="tooltip" ng-model="searchRequest.BeginTime">
+                </span>
+                    <span class="span_dis fl_lf mr_sp">~</span>
+                    <span class="span_dis fl_lf mr_sp">
+                    <input id="end_state" class="form-control" data-placement="bottom"
+                           title="请填入正确的日期" type="text" placeholder="截至日期" name="endDate" data-toggle="tooltip"
+                           ng-model="searchRequest.EndTime">
+                </span>
+                    <span class="span_dis fl_lf mr_sp">
+                    <button class="btn btn-primary" ng-click="searchSMS();" ng-disabled="btnIsDisabled">搜 索</button>
+                </span>
+                </div>
+                <div class="bd_body">
+                    <div class="tb_head">
+                        <span class="col_4">发送方</span>
+                        <span class="col_4">接收方</span>
+                        <span class="col_4">手机号码</span>
+                        <span class="col_2">短信内容</span>
+                        <span class="col_4">短信类型</span>
+                        <span class="col_1">时间</span>
+                        <span class="col_1">状态</span>
+                        <span class="col_4">操作</span>
+                    </div>
+                    <div class="tb_item" ng-repeat="item in smsList">
+                        <span class="col_4" ng-bind="item.SenderName"></span>
+                        <span class="col_4" ng-bind="item.ReceiverName"></span>
+                        <span class="col_4" ng-bind="item.ReceiverMobile"></span>
+                        <span class="col_2" ng-bind="item.Message"></span>
+                        <span class="col_4" ng-bind="getMessageType(item.MessageType)"></span>
+                        <span class="col_1" ng-bind="item.CreateTime"></span>
+                        <span class="col_1">
+                        <span ng-class="{'active_color': smsState == 1, 'expired_color': smsState == 0}" ng-bind="getSMSState(item.StatusCode)">
+                        </span>
+                    </span>
+                        <span class="col_4">
+                        <button class="btn" ng-class="{'btn-primary':(smsState != 1 || smsType != 2)}" ng-disabled="smsState == 1 || smsType ==2" style="padding: 3px 12px;">重新发送</button>
+                    </span>
+                    </div>
+                    <div class="data_element page_footer" style="display: none;">
+                        <div class="page_total">
+                        <span class="pagination">
+                            <span>总记录数：</span>
+                            <span>{{totalCount}}</span>
+                        </span>
+                        </div>
+                        <div class="page_total">
+                            <span>页面大小：</span>
+                            <span><select ng-options="item.Value as item.Value for item in pageSizeList"
+                                          ng-model="searchRequest.Count" ng-change="changePageSize();"></select></span>
+                        </div>
+                        <div class="page_total">
+                        <span class="pagination">
+                            <span>第</span>
+                            <input id="jump_page" type="text" ng-model="currentPageNum" ng-blur="jumpToPage();" style="width: 30%; text-align: center;">
+                            <span>页</span>
+                            <span>/共{{totalPages}}页</span>
+                        </span>
+                        </div>
+                        <div class="page_num">
+                            <div class="pagination">
+                            </div>
+                            <ul class="pagination">
+                                <li ng-class="{'disabled': currentFivePages[0] <= 5}"><a href="javascript:void(0);" ng-click="prevPages();">&laquo;</a></li>
+                                <li ng-repeat="item in currentFivePages" ng-class="{'active': currentPageNum == item}">
+                                    <a href="javascript:void(0);" ng-click="switchToCurrentPage(item);">{{item}}</a>
+                                </li>
+                                <li ng-class="{'disabled': isDisabled()}"><a href="javascript:void(0);" ng-click="nextPages();">&raquo;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+    <footer class="footer footer_pal">
+        <span class="footer_span">Copyright &copy;2016/07/04 www.eruka.com</span>
+    </footer>
+</body>
+
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Custom/Management/common.min.js"></script>
+<script src="../js/Custom/Management/smsPlatform.min.js"></script>
+</html>

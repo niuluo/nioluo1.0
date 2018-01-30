@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8;"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Custom/style.css" rel="stylesheet">
+    <link href="../css/Common/jquery.carousel.css" rel="stylesheet">
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Common/banner.css" rel='stylesheet' />
+</head>
+<body>
+ <div id="loginBG">
+   
+  <div id="denglu">
+  	 <cuty-rty></cuty-rty>
+  </div>
+ 
+ <!-- </header>-->
+    <section class="" id="loginSection" ng-controller="loginIndexController">
+        <div class="htmleaf-content">
+            <div id="posterTvGrid" style="margin:40px auto 0 auto;background-color: lightgray;"></div>
+        </div>
+
+        <div class="loginContent">
+            <img src="../Images/loginImg/niu1v2.jpg" alt="">
+            <img src="../Images/loginImg/niu2v2.jpg" alt="">
+            <img src="../Images/loginImg/niu3v2.jpg" alt="">
+            <img src="../Images/loginImg/niu4v2.jpg" alt="">
+            <img src="../Images/loginImg/niu5v2.jpg" alt="">
+            <img src="../Images/loginImg/niu6v2.jpg" alt="">
+            <img src="../Images/loginImg/niu7v2.jpg" alt="">
+        </div>
+    </section>
+    <div id="foot">
+    	<footy></footy>
+    </div>
+</div>
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/Jquery/jquery.carousel.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Angular/angular-cookies.min.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Angular/angular-file-upload.1.3.1.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Custom/common.min.js?v=20161024"></script>
+<script src="../js/Custom/login.min.js?v=20161024"></script>
+<script src="../js/Common/Jquery/vue.min.js"></script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<script src="../js/Common/Jquery/zujian.js"></script>
+<script src="../js/Common/Jquery/banner.js"></script>
+<script type="text/javascript">
+    var high = window.screen.availHeight;
+    var wid = window.screen.availWidth - 20;
+    var posterTvGrid = new posterTvGrid('posterTvGrid',{className: "posterTvGrid", width: wid, height: (high - 250)},[
+                {"img":"..\/Images\/loginImg\/lun1.jpg","title":"Lorem ipsum dolor sit amet","url":""},
+                {"img":"..\/Images\/loginImg\/lun2.jpg","title":"Lorem ipsum dolor sit amet","url":""},
+                {"img":"..\/Images\/loginImg\/lun3.jpg","title":"Lorem ipsum dolor sit amet","url":""},
+                {"img":"..\/Images\/loginImg\/lun4.jpg","title":"Lorem ipsum dolor sit amet","url":""}
+            ]
+    );
+</script>
+</body>
+</html>

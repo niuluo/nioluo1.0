@@ -1,0 +1,411 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="icon" href="" type="image/x-icon" id="icon_link"/>
+    <link href="../css/Common/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/Common/font-awesome.css" rel="stylesheet"/>
+    <link href="../css/Common/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../css/Common/jquery-ui.min.css" rel="stylesheet">
+    <link href="../css/Common/validationEngine.jquery.css" rel="stylesheet">
+    <link href="../css/Custom/Management/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="modal fade" id="loading_div" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal_dialog_custom">
+        <div class="cus_spinner">
+            <div class="cus_spinner-container cus_container1">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container2">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+            <div class="cus_spinner-container cus_container3">
+                <div class="circle1"></div>
+                <div class="circle2"></div>
+                <div class="circle3"></div>
+                <div class="circle4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<header class="header">
+    <content></content>
+</header>
+<aside>
+    <section ng-controller='MenuController'>
+        <menu></menu>
+        <info></info>
+    </section>
+</aside>
+<section id="main-content">
+    <section class="wrapper" ng-controller="ClinicController">
+        <div class="bd">
+            <div class="bd_head">
+                <span class="span_dis fl_lf mr_sp"><select class="form-control" ng-options="item.Type as item.Name for item in clinicStates" ng-model="searchRequest.Status"></select></span>
+                <span class="span_dis fl_lf mr_sp"><input type="text" placeholder="诊所名称/手机号" class="form-control round-input"
+                                              ng-model="searchRequest.Condition"></span>
+                <span class="span_dis fl_lf mr_sp"><button class="btn btn-primary" ng-click="searchClinic();" ng-disabled="btnIsDisabled">搜 索</button></span>
+                <span class="span_dis fl_rg"><button class="btn btn-primary" ng-click="openInviteCode();">创建邀请码</button></span>
+            </div>
+            <div class="bd_body">
+                <div class="tb_head">
+                    <span class="col_1">诊所名称</span>
+                    <span class="col_3">联系人</span>
+                    <span class="col_4">联系电话</span>
+                    <span class="col_2">地址</span>
+                    <span class="col_1">注册时间</span>
+                    <span class="col_1">过期时间</span>
+                    <span class="col_4">状态</span>
+                    <span class="col_4">操作</span>
+                </div>
+                <div ng-repeat="item in clinicList" ng-click="showClinicDetail(item);" class="tb_item">
+                    <span class="col_1">
+                        <img ng-src="{{getClinicLogo(item.Logo)}}" alt="暂无" style="width: 25px;height: 25px;border-radius: 50%;margin-right: 5px;"><span ng-bind="item.TenantName"></span>
+                    </span>
+                    <span class="col_3" ng-bind="item.Contact">
+                    </span>
+                    <span class="col_4" ng-bind="item.ContactPhone"></span>
+                    <span class="col_2" ng-bind="item.Address"></span>
+                    <span class="col_1" ng-bind="item.CreateTime"></span>
+                    <span class="col_1" ng-bind="item.ExpireTime"></span>
+                    <span class="col_4"><span ng-class="{'active_color': item.StateCode == 2,
+                                'expired_color': item.StateCode == 1,
+                                'lock_color': item.StateCode == 3}" ng-bind="getClinicState(item)"></span></span>
+                    <span class="col_4"  ng-if="item.StateCode == 3">
+                        <a href="javascript:void(0);" ng-click="changeClinicState(item, 0, $event);" ng-bind="item.OperateTitle"></a>
+                    </span>
+                    <span class="col_4"  ng-if="item.StateCode != 3">
+                        <a href="javascript:void(0);" ng-click="changeClinicState(item, 1, $event);" ng-bind="item.OperateTitle"></a>&nbsp;
+                        <a href="javascript:void(0);" ng-click="changeClinicState(item, 2, $event);" ng-bind="item.OperateTitle1"></a>
+                    </span>
+                </div>
+                <div class="data_element page_footer" style="display: none;">
+                    <div class="page_total">
+                                <span class="pagination">
+                                    <span>总记录数：</span>
+                                    <span>{{totalCount}}</span>
+                                </span>
+                    </div>
+                    <div class="page_total">
+                        <span>页面大小：</span>
+                        <span><select ng-options="item.Value as item.Value for item in pageSizeList"
+                                      ng-model="searchRequest.Count" ng-change="changePageSize();"></select></span>
+                    </div>
+                    <div class="page_total">
+                                <span class="pagination">
+                                    <span>第</span>
+                                    <input id="jump_page" type="text" ng-model="currentPageNum" ng-blur="jumpToPage();" style="width: 30%; text-align: center;">
+                                    <span>页</span>
+                                    <span>/共{{totalPages}}页</span>
+                                </span>
+                    </div>
+                    <div class="page_num">
+                        <div class="pagination">
+                        </div>
+                        <ul class="pagination">
+                            <li ng-class="{'disabled': currentFivePages[0] <= 5}"><a href="javascript:void(0);" ng-click="prevPages();">&laquo;</a></li>
+                            <li ng-repeat="item in currentFivePages" ng-class="{'active': currentPageNum == item}">
+                                <a href="javascript:void(0);" ng-click="switchToCurrentPage(item);">{{item}}</a>
+                            </li>
+                            <li ng-class="{'disabled': isDisabled()}"><a href="javascript:void(0);" ng-click="nextPages();">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 邀请码 Begin -->
+        <div ng-controller="InviteController" class="modal fade" id="inviteCode" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" style="overflow: hidden;">
+            <div class="modal-dialog in_modal_w in_modal_h">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <span class="head_title">邀请码</span>
+                    </div>
+                    <div class="modal-body in_bd_h">
+                        <div class="sub-body in_con">
+                            <div class="menu_header in_head">
+                                <ul class="nav nav-tabs tab-bg-dark-navy-blue sub_nav">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#createCode" class="menu_title" ng-click="switchTab(1);">创建</a>
+                                    </li>
+                                    <li class="">
+                                        <a data-toggle="tab" href="#seeCode" class="menu_title" ng-click="switchTab(2);">查看所有</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="tab-content in_bd">
+                                <div id="createCode" class="in_bd tab-pane active">
+                                    <div class="bd_head in_item_h">
+                                        <span class="span_dis in_item_h fl_lf">
+                                            <select name="timeMode" class="form-control timeMode" ng-model="timeMode" ng-change="ModeChoose();" ng-options="item.Type as item.Value for item in ModeList">
+                                            </select>
+                                        </span>
+                                        <span class="ExpireTime in_item_h span_dis fl_lf wid_1">
+                                            <input name="count" type="text" placeholder="创建数量" class="form-control round-input"
+                                                   ng-model="createInviteCode.Count">
+                                        </span>
+                                        <span class="ExpireTime in_item_h span_dis fl_lf wid_2 mr_sp">
+                                            <input name="expireTime" id="inviteCodeExpireTime" type="text"
+                                                   placeholder="截止日期"
+                                                   class="form-control round-input"
+                                                   ng-model="createInviteCode.ExpireTime">
+                                        </span>
+                                        <span class="Validity in_item_h fl_lf wid_1">
+                                            <input name="countDay" type="text" placeholder="创建数量"
+                                                   class="form-control round-input"
+                                                   ng-model="createInviteCode.dayCount">
+                                        </span>
+                                        <span class="Validity in_item_h fl_lf wid_2 mr_sp">
+                                            <input name="Validity" id="inviteCodeExpireDay" type="text"
+                                                   placeholder="有效时间(天)"
+                                                   class="form-control round-input"
+                                                   ng-model="createInviteCode.Validity">
+                                        </span>
+                                        <span ng-show="currentTab == 1" class="span_dis in_item_h">
+                                            <button class="btn btn-primary" ng-click="createInviteCodeClick();">生成邀请码</button>
+                                        </span>
+                                        <span ng-show="currentTab == 1" class="span_dis in_item_h fl_rg">
+                                            <button ng-show="currentTab == 1" class="btn btn-primary" ng-click="createdInviteCodes.length == 0 || exportToExcel(0);">下载生成邀请码</button>
+                                        </span>
+                                    </div>
+                                    <div class="bd_con">
+                                        <div class="bd_title in_item_h">
+                                            <span class="bd_item wid_3 fl_lf">邀请码</span>
+                                            <span class="bd_item wid_3 fl_lf">状态</span>
+                                            <span class="bd_item wid_3 fl_lf">有效时间</span>
+                                            <span class="bd_item wid_3 fl_lf">创建时间</span>
+                                        </div>
+                                        <div ng-repeat="item in showCreateCodes | limitTo : 10" class="item_bt in_item_h">
+                                            <span class="bd_item wid_3 fl_lf" ng-bind="item.Code"></span>
+                                            <span class="bd_item wid_3 fl_lf" ng-bind="getCodeState(item)"></span>
+                                            <span class="bd_item wid_3 fl_lf" ng-hide="item.ExpireTime == null" ng-bind="showTime(item.ExpireTime)"></span>
+                                            <span class="bd_item wid_3 fl_lf" ng-hide="item.Validity == null"><span ng-bind="item.Validity"></span>天</span>
+                                            <span class="bd_item wid_3 fl_lf" ng-bind="item.CreateTime"></span>
+                                        </div>
+                                        <div id="code_footer" class="foot_page">
+                                            <div class="page_total">
+                                                <span>总记录数：</span>
+                                                <span ng-bind="totalCodeCount"></span>
+                                            </div>
+                                            <div class="page_total">
+                                                <span>页面大小：</span>
+                                                <span ng-bind="inviteCodeRequest.Count"></span>
+                                            </div>
+                                            <div class="page_total_1">
+                                                <span>第</span>
+                                                <input id="jump_page_2" type="text" ng-model="currentCodePageNum" ng-blur="createCodesJumpToPage();" style="width: 30%; text-align: center;">
+                                                <span>页/共</span>
+                                                <span ng-bind="totalCodePages"></span>页
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="loading_data_1" class="loader" style="display: none;">
+                                        <div class="loader-inner line-spin-fade-loader">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="seeCode" class="tab-pane in_bd">
+                                    <div class="bd_head in_item_h">
+                                        <span ng-show="currentTab == 2" class="span_dis in_item_h fl_rg">
+                                            <button class="btn btn-primary" ng-click="inviteCodes.length == 0 || exportToExcel(1);">下载所有邀请码</button>
+                                        </span>
+                                    </div>
+                                    <div class="bd_con">
+                                        <div class="bd_title in_item_h">
+                                            <span class="bd_item wid_2 fl_lf">诊所名称</span>
+                                            <span class="bd_item wid_2 fl_lf">邀请码</span>
+                                            <span class="bd_item wid_2 fl_lf">状态</span>
+                                            <span class="bd_item wid_2 fl_lf">有效时间</span>
+                                            <span class="bd_item wid_2 fl_lf">创建时间</span>
+                                        </div>
+                                        <div ng-repeat="item in inviteCodes" class="item_bt in_item_h">
+                                            <span class="bd_item wid_2 fl_lf" ng-bind="item.TenantName"></span>
+                                            <span class="bd_item wid_2 fl_lf" ng-bind="item.Code"></span>
+                                            <span class="bd_item wid_2 fl_lf" ng-bind="getCodeState(item)"></span>
+                                            <span class="bd_item wid_2 fl_lf" ng-if="item.ExpireTime != null" ng-bind="showTime(item.ExpireTime)"></span>
+                                            <span class="bd_item wid_2 fl_lf" ng-if="item.ExpireTime == null"><span ng-bind="item.Validity"></span>天</span>
+                                            <span class="bd_item wid_2 fl_lf" ng-bind="item.CreateTime"></span>
+                                        </div>
+                                        <div class="foot_page">
+                                            <div class="page_total">
+                                                <span>总记录数：</span>
+                                                <span ng-bind="totalCount"></span>
+                                            </div>
+                                            <div class="page_total">
+                                                <span>页面大小：</span>
+                                                <span ng-bind="inviteCodeRequest.Count"></span>
+                                            </div>
+                                            <div class="page_total_1">
+                                                <span>第</span>
+                                                <input id="jump_page_1" type="text" ng-model="currentPageNum" ng-blur="jumpToPage();" style="width: 30%; text-align: center;">
+                                                <span>页/共</span>
+                                                <span ng-bind="totalPages"></span>页
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 邀请码 End -->
+        <!-- 续期 Begin -->
+        <div class="modal fade" id="renewal" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal_dialog_custom_small_2">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <span class="head_title">续期</span>
+                    </div>
+                    <div class="modal-body modal_body_custom">
+                        <div class="col-lg-12 cus_row_0">
+                            <span class="cus_row_1">原截止日期：</span>
+                            <span>{{currentClinic.ExpireTime}}</span>
+                        </div>
+                        <div class="col-lg-12 cus_row_0">
+                            <span class="cus_row_1">续期日期：</span>
+                            <span class="cus_row_2"><input class="form-control" type="text" placeholder="续期日期" id="renewal_date" ng-model="newRenewalDate"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal_foot_custom">
+                        <button class="btn btn-primary" ng-click="saveRenewal(currentClinic,newRenewalDate)" class="close"
+                                data-dismiss="modal" aria-hidden="true">保 存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 续期 End -->
+        <!-- 诊所信息 Begin -->
+        <div class="modal fade" id="clinic_info" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog cl_modal_w cl_modal_h">
+                <div class="modal-content modal_content_custom">
+                    <div class="modal-header modal_head modal_header_height">
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <span class="head_title">诊所信息</span>
+                    </div>
+                    <div class="modal-body modal_body_custom">
+                        <table style="height: 100%;">
+                            <tbody style="width: 100%;height: 100%;">
+                                <tr style="height: 15%;width: 100%;">
+                                    <td rowspan="2" colspan="2" style="width: 35%;text-align: center;">
+                                        <img ng-src="{{getClinicLogo(currentClinic.Logo)}}" alt="暂无图片" style="width: 100px;height: 100px;border-radius: 50%;">
+                                    </td>
+                                    <td style="width: 25%;text-align:right;"><span>诊所名称：</span></td>
+                                    <td style="width: 40%"><span ng-bind="currentClinic.TenantName"></span></td>
+                                </tr>
+                                <tr style="height: 15%;width: 100%;">
+                                    <td style="text-align: right;"><span>诊所地址：</span></td>
+                                    <td><span ng-bind="currentClinic.Address"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>联系人：</span></td>
+                                    <td><span ng-bind="currentClinic.Contact"></span></td>
+                                    <td style="text-align: right;"><span>联系电话：</span></td>
+                                    <td><span ng-bind="currentClinic.ContactPhone"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>邮箱：</span></td>
+                                    <td><span ng-bind="currentClinic.Email"></span></td>
+                                    <td style="text-align: right;"><span>预约电话：</span></td>
+                                    <td><span ng-bind="currentClinic.BookMobile"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>诊所认证：</span></td>
+                                    <td><span ng-bind="currentClinic.Authentication"></span></td>
+                                    <td style="text-align: right;"><span>诊所简介：</span></td>
+                                    <td><span ng-bind="currentClinic.Description"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>诊所状态：</span></td>
+                                    <td>
+                                        <span ng-if="currentClinic.StateCode == 1" style="color: red">已到期</span>
+                                        <span ng-if="currentClinic.StateCode == 2" style="color: green;">正常</span>
+                                        <span ng-if="currentClinic.StateCode == 3" style="color: #CCCC00;">已冻结</span>
+                                    </td>
+                                    <td style="text-align: right;"><span>邀请码：</span></td>
+                                    <td><span ng-bind="currentClinic.InvitCode"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>注册时间：</span></td>
+                                    <td><span ng-bind="currentClinic.CreateTime"></span></td>
+                                    <td style="text-align: right;"><span>截至时间：</span></td>
+                                    <td><span ng-bind="currentClinic.ExpireTime"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="text-align: right;"><span>登录次数：</span></td>
+                                    <td><span ng-bind="currentClinic.LoginCount"></span></td>
+                                    <td style="text-align: right;"><span>上一次登录时间：</span></td>
+                                    <td><span ng-bind="currentClinic.LastLoginTime"></span></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;">
+                                    <td style="width:15%;text-align: right;"><span>账号：</span></td>
+                                    <td style="width:20%;">
+                                        <span ng-bind="currentClinic.Mobile"></span>
+                                    </td>
+                                    <td style="width:15%;text-align: right;"><span>密码：</span></td>
+                                    <td><button class="btn btn-primary" ng-click="updatePassword()" ng-bind="operateTitle"></button></td>
+                                </tr>
+                                <tr style="height: 10%;width: 100%;" ng-show="isReset">
+                                    <td style="text-align: right;">新密码：</td>
+                                    <td>
+                                        <input type="password" class="form-control" placeholder="新密码" name="new_password" ng-model="newPassword" id="new_password">
+                                    </td>
+                                    <td style="text-align: right;">确认密码：</td>
+                                    <td><input type="password" class="form-control" placeholder="确认密码" name="confirm_password" ng-model="confirmPassword"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 诊所信息 End -->
+    </section>
+</section>
+<footer class="footer footer_pal">
+    <span class="footer_span">Copyright &copy;2016/07/04 www.eruka.com</span>
+</footer>
+</body>
+<script src="../js/Common/Jquery/jquery-2.1.1.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap.min.js"></script>
+<script src="../js/Common/BootStrap/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/Common/Angular/angular.min.1-4-6.js"></script>
+<script src="../js/Common/Jquery/formValidator-4.1.3.js"></script>
+<script src="../js/Common/Jquery/formValidatorRegex.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine.js"></script>
+<script src="../js/Common/Jquery/jquery.validationEngine-zh_CN.js"></script>
+<script src="../js/Custom/Management/common.min.js?v=20161026"></script>
+<script src="../js/Custom/Management/clinicMG.min.js?v=20161026"></script>
+</html>

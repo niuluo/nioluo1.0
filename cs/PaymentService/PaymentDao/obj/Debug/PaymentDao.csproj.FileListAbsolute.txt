@@ -1,0 +1,13 @@
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\PaymentDao.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\PaymentDao.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\eHospitalLogHelper.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\eHospitalNHibernateHelper.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\NHibernate.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\PaymentModel.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\Iesi.Collections.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\PaymentModel.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\eHospitalLogHelper.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\bin\Debug\eHospitalNHibernateHelper.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\obj\Debug\PaymentDao.csprojResolveAssemblyReference.cache
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\obj\Debug\PaymentDao.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentDao\obj\Debug\PaymentDao.pdb

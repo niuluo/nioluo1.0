@@ -1,0 +1,5 @@
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\bin\Release\PaymentModel.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\bin\Release\PaymentModel.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\obj\Release\PaymentModel.dll
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\obj\Release\PaymentModel.pdb
+D:\source\eHospital\04.开发\源代码\支付\PaymentService\PaymentModel\obj\Release\PaymentModel.csprojResolveAssemblyReference.cache

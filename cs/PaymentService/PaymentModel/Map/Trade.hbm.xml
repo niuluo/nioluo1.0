@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="PaymentModel" namespace="PaymentModel.Entities" default-lazy="true">
+  <class name="Trade" table="[tbTrade]">
+    <id name="ID" type="Int32" unsaved-value="null">
+      <column name="ID" length="4" sql-type="int" not-null="true" unique="true"/>
+      <generator class="native" />
+    </id>
+    <property name="TradeNo"/>
+    <property name="ActualTradeNo"/>
+    <property name="TradeFrom"/>
+    <property name="TradeFromNo"/>
+    <property name="Type"/>
+    <property name="Fee"/>
+    <property name="Subject" />
+    <property name="ReturnUrl" />
+    <property name="TypeStatus" />
+    <property name="Status" />
+    <property name="State" />
+    <property name="UpdatedTime" />
+  </class>
+</hibernate-mapping>
